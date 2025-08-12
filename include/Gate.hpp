@@ -7,8 +7,8 @@
 namespace qcf {
 	class Gate {
 	public:
-		std::string name;
-		std::vector<std::complex<double>> matrix;
-		Gate();
+		std::vector<std::vector<std::complex<double>>> matrix;
+		size_t target;
+		Gate(const std::vector<std::vector<std::complex<double>>>& mat, int target);
 	};
 }

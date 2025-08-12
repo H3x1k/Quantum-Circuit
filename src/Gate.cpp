@@ -4,6 +4,6 @@
 
 using namespace qcf;
 
-Gate::Gate() {
+Gate::Gate(const std::vector<std::vector<std::complex<double>>>& mat, int target) : matrix(mat), target(target) {
 
 }
