@@ -10,5 +10,5 @@ QuantumCircuit::QuantumCircuit(int numQubits) : numQubits(numQubits), stateVecto
 }
 
 void QuantumCircuit::addGate(const Gate& gate) {
-	
+	operations.push_back(gate);
 }

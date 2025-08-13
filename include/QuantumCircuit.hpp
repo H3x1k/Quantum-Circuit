@@ -12,6 +12,7 @@ namespace qcf {
 
 		size_t numQubits;
 		std::vector<std::complex<double>> stateVector;
+		std::vector<Gate> operations;
 
 		QuantumCircuit(int numQubits);
 		
