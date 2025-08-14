@@ -53,6 +53,25 @@ public:
         return result;
     }
 
+    Matrix<T> tensorProduct(const Matrix<T>& other) const {
+        Matrix<T> result(rows * other.rows, cols * other.cols);
+
+        for (size_t i = 0; i < rows; ++i) {
+            for (size_t j = 0; j < cols; ++j) {
+                T value = (*this)(i, j);
+                for (size_t ii = 0; ii < other.rows; ++ii) {
+                    for (size_t jj = 0; jj < other.cols; ++jj) {
+                        result(i * other.rows + ii, j * other.cols + jj) =
+                            value * other(ii, jj);
+                    }
+                }
+            }
+        }
+
+        return result;
+    }
+
+
     void print() const {
         for (size_t i = 0; i < rows; ++i) {
             for (size_t j = 0; j < cols; ++j)

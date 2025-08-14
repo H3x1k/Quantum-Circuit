@@ -13,24 +13,32 @@ double static mag(std::complex<double> z) {
 
 int main() {
 
-	Matrix qubitState(2, 1, std::complex<double>(0.0, 0.0));
-	qubitState(0, 0) = { 1.0, 0.0 };
+	Matrix qubitState1(2, 1, std::complex<double>(0.0, 0.0));
+	qubitState1(0, 0) = { 1.0, 0.0 };
+	Matrix qubitState2(2, 1, std::complex<double>(0.0, 0.0));
+	qubitState2(0, 0) = { 1.0, 0.0 };
 
 	Matrix H(2, 2, std::complex<double>(1.0, 0.0));
 	H = H * (1 / sqrt(2));
 	H(1, 1) = -(1 / sqrt(2));
 
-	qubitState.print();
+	qubitState1.print();
 
-	qubitState = H * qubitState;
+	qubitState1 = H * qubitState1;
 
-	qubitState.print();
+	qubitState1.print();
 
-	double prob0 = mag(qubitState(0, 0));
-	double prob1 = mag(qubitState(1, 0));
+	double prob0 = mag(qubitState1(0, 0));
+	double prob1 = mag(qubitState1(1, 0));
 	
 	std::cout << "Probability of measuring |0> : " << prob0 << std::endl;
 	std::cout << "Probability of measuring |1> : " << prob1 << std::endl;
+
+	qubitState1 = qubitState1.tensorProduct(qubitState2);
+
+	qubitState1 = qubitState1.tensorProduct(qubitState2);
+
+	qubitState1.print();
 
 	while (1);
 
