@@ -34,9 +34,9 @@ int main() {
 	std::cout << "Probability of measuring |0> : " << prob0 << std::endl;
 	std::cout << "Probability of measuring |1> : " << prob1 << std::endl;
 
-	qubitState1 = qubitState1.tensorProduct(qubitState2);
+	qubitState1 = qubitState1.tensorProduct(qubitState1);
 
-	qubitState1 = qubitState1.tensorProduct(qubitState2);
+	qubitState1 = qubitState1.tensorProduct(qubitState1);
 
 	qubitState1.print();
 
