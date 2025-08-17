@@ -13,6 +13,22 @@ double static mag(std::complex<double> z) {
 
 int main() {
 
+	/*
+	
+	QuantumCircuit qc(qn (number of qubits), cn (number of cbits))
+
+	qc.<single qubit gate symbol>( qi (qubit index) or qi[] (multiple target qubits) )
+	// H = Hadamard
+
+	qc.<controlled gate symbol>( qi[] (indices of control qubits), qi (qubit index) or qi[] (multiple target qubits) )
+
+	qc.<multi-qubit gate symbol>( qi[] (multiple target qubits) )
+
+	qc.addGate() // multiple options
+
+
+	*/
+
 	Matrix qubitState1(2, 1, std::complex<double>(0.0, 0.0));
 	qubitState1(0, 0) = { 1.0, 0.0 };
 	Matrix qubitState2(2, 1, std::complex<double>(0.0, 0.0));
