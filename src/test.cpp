@@ -15,7 +15,7 @@ int main() {
 
 	/*
 	
-	QuantumCircuit qc(qn (number of qubits), cn (number of cbits))
+	QuantumCircuit qc(qn (number of qubits), ? cn (number of cbits))
 
 	qc.<single qubit gate symbol>( qi (qubit index) or qi[] (multiple target qubits) )
 	// H = Hadamard
@@ -28,6 +28,8 @@ int main() {
 
 
 	*/
+
+	/*
 
 	Matrix qubitState1(2, 1, std::complex<double>(0.0, 0.0));
 	qubitState1(0, 0) = { 1.0, 0.0 };
@@ -55,6 +57,16 @@ int main() {
 	qubitState1 = qubitState1.tensorProduct(qubitState1);
 
 	qubitState1.print();
+
+	*/
+
+	qcf::QuantumCircuit qc(5);
+
+	qc.printState();
+
+	qc.H(2);
+
+	qc.printState();
 
 	while (1);
 

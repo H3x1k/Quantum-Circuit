@@ -3,7 +3,7 @@
 #include <vector>
 #include <complex>
 
-#include "Gate.hpp"
+#include "Matrix.hpp"
 
 namespace qcf {
 
@@ -11,12 +11,16 @@ namespace qcf {
 	public:
 
 		size_t numQubits;
-		std::vector<std::complex<double>> stateVector;
-		std::vector<Gate> operations;
+		Matrix<std::complex<double>> stateVector;
 
 		QuantumCircuit(int numQubits);
 		
-		void addGate(const Gate& gate);
+		void H(int qi);
+
+
+		//const Matrix<std::complex<double>>& getState() const;
+		void printState() const;
+		//void printDiagram();
 	};
 
 }

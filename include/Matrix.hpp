@@ -1,5 +1,7 @@
 // Matrix header
+#pragma once
 
+#include <iostream>
 #include <vector>
 
 template<typename T>
@@ -8,8 +10,17 @@ public:
 	size_t rows, cols;
 	std::vector<T> data;
 
+    Matrix() : rows(0), cols(0), data() {}
+
 	Matrix(size_t rows, size_t cols, const T& initVal = T())
         : rows(rows), cols(cols), data(rows* cols, initVal) {}
+
+    static Matrix<T> identity(size_t n) {
+        Matrix<T> result(n, n, T());
+        for (size_t i = 0; i < n; ++i)
+            result(i, i) = static_cast<T>(1);
+        return result;
+    }
 
     T& operator()(size_t r, size_t c) {
         if (r >= rows || c >= cols)
