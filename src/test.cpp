@@ -60,13 +60,15 @@ int main() {
 
 	*/
 
-	qcf::QuantumCircuit qc(5);
+	int nq = 5;
 
-	qc.printState();
+	qcf::QuantumCircuit qc(nq);
 
-	qc.H(2);
+	for (int i = 0; i < nq; i++) {
+		qc.H(i);
+	}
 
-	qc.printState();
+	qc.printProb();
 
 	while (1);
 

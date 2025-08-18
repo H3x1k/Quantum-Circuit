@@ -3,6 +3,7 @@
 #include "QuantumCircuit.hpp"
 #include <cmath>
 #include <iostream>
+#include <bitset>
 
 #define C std::complex<double>
 
@@ -26,11 +27,21 @@ void QuantumCircuit::H(int qi) {
 
 	Matrix fullGate = I1.tensorProduct(H).tensorProduct(I2);
 
-	fullGate.print();
-
 	stateVector = fullGate * stateVector;
 }
 
 void QuantumCircuit::printState() const {
 	stateVector.print();
+}
+
+void QuantumCircuit::printProb() const {
+	for (size_t i = 0; i < stateVector.rows; i++) {
+		if (stateVector(i, 0) != C(0.0, 0.0)) {
+			double prob = std::norm(stateVector(i, 0));
+			std::cout << "|";
+			for (size_t j = 0; j < numQubits; j++)
+				std::cout << ((i >> (numQubits - 1 - j)) & 1);
+			std::cout << "> : " << prob << std::endl;
+		}
+	}
 }

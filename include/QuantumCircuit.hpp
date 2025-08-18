@@ -17,9 +17,8 @@ namespace qcf {
 		
 		void H(int qi);
 
-
-		//const Matrix<std::complex<double>>& getState() const;
 		void printState() const;
+		void printProb() const;
 		//void printDiagram();
 	};
 
