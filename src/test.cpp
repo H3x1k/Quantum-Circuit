@@ -70,7 +70,7 @@ int main() {
 		else
 			qc.H(i);
 	}*/
-	qc.NOT(0);
+	qc.Z(0);
 
 	qc.printProb();
 

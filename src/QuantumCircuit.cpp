@@ -32,16 +32,42 @@ void QuantumCircuit::H(int qi) {
 	stateVector = fullGate * stateVector;
 }
 
-void QuantumCircuit::NOT(int qi) {
+void QuantumCircuit::X(int qi) {
 
-	Matrix<C> NOT(2, 2, C(0.0, 0.0));
-	NOT(0, 1) = C(1.0, 0.0);
-	NOT(1, 0) = C(1.0, 0.0);
+	Matrix<C> X(2, 2, C(0.0, 0.0));
+	X(0, 1) = C(1.0, 0.0);
+	X(1, 0) = C(1.0, 0.0);
 
 	Matrix I1 = Matrix<C>::identity(size_t(1) << qi);
 	Matrix I2 = Matrix<C>::identity(size_t(1) << (numQubits - qi - 1));
 
-	Matrix fullGate = I1.tensorProduct(NOT).tensorProduct(I2);
+	Matrix fullGate = I1.tensorProduct(X).tensorProduct(I2);
+
+	stateVector = fullGate * stateVector;
+}
+
+void QuantumCircuit::Y(int qi) {
+	Matrix<C> Y(2, 2, C(0.0, 0.0));
+	Y(0, 1) = C(0.0, 1.0);
+	Y(1, 0) = C(0.0, 1.0);
+
+	Matrix I1 = Matrix<C>::identity(size_t(1) << qi);
+	Matrix I2 = Matrix<C>::identity(size_t(1) << (numQubits - qi - 1));
+
+	Matrix fullGate = I1.tensorProduct(Y).tensorProduct(I2);
+
+	stateVector = fullGate * stateVector;
+}
+
+void QuantumCircuit::Z(int qi) {
+	Matrix<C> Z(2, 2, C(0.0, 0.0));
+	Z(0, 0) = C(1.0, 0.0);
+	Z(1, 1) = C(-1.0, 0.0);
+
+	Matrix I1 = Matrix<C>::identity(size_t(1) << qi);
+	Matrix I2 = Matrix<C>::identity(size_t(1) << (numQubits - qi - 1));
+
+	Matrix fullGate = I1.tensorProduct(Z).tensorProduct(I2);
 
 	stateVector = fullGate * stateVector;
 }
