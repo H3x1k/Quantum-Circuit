@@ -16,6 +16,7 @@ namespace qcf {
 		QuantumCircuit(int numQubits);
 		
 		void H(int qi);
+		void NOT(int qi);
 
 		void printState() const;
 		void printProb() const;

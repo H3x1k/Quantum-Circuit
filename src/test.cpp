@@ -64,9 +64,13 @@ int main() {
 
 	qcf::QuantumCircuit qc(nq);
 
-	for (int i = 0; i < nq; i++) {
-		qc.H(i);
-	}
+	/*for (int i = 0; i < nq; i++) {
+		if (i == 0)
+			qc.NOT(i);
+		else
+			qc.H(i);
+	}*/
+	qc.NOT(0);
 
 	qc.printProb();
 
