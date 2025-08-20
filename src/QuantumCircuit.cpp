@@ -104,6 +104,57 @@ void QuantumCircuit::T(int qi) {
 }
 
 
+void QuantumCircuit::RX(int qi, double angle) {
+	Matrix<C> RX(2, 2, C(0.0, 0.0));
+	double theta = angle / 2;
+	double costheta = cos(theta);
+	double sintheta = sin(theta);
+	RX(0, 0) = C(costheta,  0.0);
+	RX(0, 1) = C(0.0, -sintheta);
+	RX(1, 0) = C(0.0, -sintheta);
+	RX(1, 1) = C(costheta,  0.0);
+
+	Matrix I1 = Matrix<C>::identity(size_t(1) << qi);
+	Matrix I2 = Matrix<C>::identity(size_t(1) << (numQubits - qi - 1));
+
+	Matrix fullGate = I1.tensorProduct(RX).tensorProduct(I2);
+
+	stateVector = fullGate * stateVector;
+}
+
+void QuantumCircuit::RY(int qi, double angle) {
+	Matrix<C> RY(2, 2, C(0.0, 0.0));
+	double theta = angle / 2;
+	double costheta = cos(theta);
+	double sintheta = sin(theta);
+	RY(0, 0) = C(costheta,  0.0);
+	RY(0, 1) = C(-sintheta, 0.0);
+	RY(1, 0) = C(-sintheta, 0.0);
+	RY(1, 1) = C(costheta,  0.0);
+
+	Matrix I1 = Matrix<C>::identity(size_t(1) << qi);
+	Matrix I2 = Matrix<C>::identity(size_t(1) << (numQubits - qi - 1));
+
+	Matrix fullGate = I1.tensorProduct(RY).tensorProduct(I2);
+
+	stateVector = fullGate * stateVector;
+}
+
+void QuantumCircuit::RZ(int qi, double angle) {
+	Matrix<C> RZ(2, 2, C(0.0, 0.0));
+	C expVal = std::exp(C(0.0, angle * 0.5));
+	RZ(0, 0) = 1.0 / expVal;
+	RZ(1, 1) = expVal;
+
+	Matrix I1 = Matrix<C>::identity(size_t(1) << qi);
+	Matrix I2 = Matrix<C>::identity(size_t(1) << (numQubits - qi - 1));
+
+	Matrix fullGate = I1.tensorProduct(RZ).tensorProduct(I2);
+
+	stateVector = fullGate * stateVector;
+}
+
+
 
 void QuantumCircuit::printState() const {
 	stateVector.print();

@@ -15,14 +15,23 @@ namespace qcf {
 
 		QuantumCircuit(int numQubits);
 		
+		// Hadamard Gate
 		void H(int qi);
 
+		// Pauli Gates
 		void X(int qi);
 		void Y(int qi);
 		void Z(int qi);
-
+	
+		// Phase Gates
 		void S(int qi);
 		void T(int qi);
+
+		// Rotation Gates
+		void RX(int qi, double angle);
+		void RY(int qi, double angle);
+		void RZ(int qi, double angle);
+
 
 		void printState() const;
 		void printProb() const;
