@@ -7,6 +7,10 @@
 
 #define C std::complex<double>
 
+#define E    2.7182818f
+#define PI   3.1415926f
+#define PI_4 0.7853981f
+
 using namespace qcf;
 
 QuantumCircuit::QuantumCircuit(int numQubits)
@@ -68,6 +72,33 @@ void QuantumCircuit::Z(int qi) {
 	Matrix I2 = Matrix<C>::identity(size_t(1) << (numQubits - qi - 1));
 
 	Matrix fullGate = I1.tensorProduct(Z).tensorProduct(I2);
+
+	stateVector = fullGate * stateVector;
+}
+
+
+void QuantumCircuit::S(int qi) {
+	Matrix<C> S(2, 2, C(0.0, 0.0));
+	S(0, 0) = C(1.0, 0.0);
+	S(1, 1) = C(0.0, 1.0);
+
+	Matrix I1 = Matrix<C>::identity(size_t(1) << qi);
+	Matrix I2 = Matrix<C>::identity(size_t(1) << (numQubits - qi - 1));
+
+	Matrix fullGate = I1.tensorProduct(S).tensorProduct(I2);
+
+	stateVector = fullGate * stateVector;
+}
+
+void QuantumCircuit::T(int qi) {
+	Matrix<C> T(2, 2, C(0.0, 0.0));
+	T(0, 0) = C(1.0, 0.0);
+	T(1, 1) = std::exp(C(0.0, PI_4));
+
+	Matrix I1 = Matrix<C>::identity(size_t(1) << qi);
+	Matrix I2 = Matrix<C>::identity(size_t(1) << (numQubits - qi - 1));
+
+	Matrix fullGate = I1.tensorProduct(T).tensorProduct(I2);
 
 	stateVector = fullGate * stateVector;
 }
