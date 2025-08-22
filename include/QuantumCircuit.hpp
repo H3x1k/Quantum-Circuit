@@ -24,8 +24,8 @@ namespace qcf {
 		void Z(int qi);
 	
 		// Phase Gates
-		void S(int qi);
-		void T(int qi);
+		void S(int qi); void Sdag(int qi);
+		void T(int qi); void Tdag(int qi);
 
 		// Rotation Gates
 		void RX(int qi, double angle);

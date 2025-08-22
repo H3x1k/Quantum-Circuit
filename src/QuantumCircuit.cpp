@@ -7,9 +7,13 @@
 
 #define C std::complex<double>
 
-#define E    2.7182818f
-#define PI   3.1415926f
-#define PI_4 0.7853981f
+#define E        2.7182818f
+
+#define PI       3.1415926f
+#define PI_4     0.7853981f
+
+#define SQRT2    1.4142135f
+#define INVSQRT2 0.2132007f
 
 using namespace qcf;
 
@@ -24,9 +28,8 @@ QuantumCircuit::QuantumCircuit(int numQubits)
 void QuantumCircuit::H(int qi) {
 
 	Matrix<C> H(2, 2, C(1.0, 0.0));
-	double invSqrt2 = 1.0 / sqrt(2.0);
-	H = H * invSqrt2;
-	H(1, 1) = -invSqrt2;
+	H = H * INVSQRT2;
+	H(1, 1) = -INVSQRT2;
 
 	Matrix I1 = Matrix<C>::identity(size_t(1) << qi);
 	Matrix I2 = Matrix<C>::identity(size_t(1) << (numQubits - qi - 1));
@@ -90,15 +93,41 @@ void QuantumCircuit::S(int qi) {
 	stateVector = fullGate * stateVector;
 }
 
+void QuantumCircuit::Sdag(int qi) {
+	Matrix<C> Sdag(2, 2, C(0.0, 0.0));
+	Sdag(0, 0) = C(1.0,  0.0);
+	Sdag(1, 1) = C(0.0, -1.0);
+
+	Matrix I1 = Matrix<C>::identity(size_t(1) << qi);
+	Matrix I2 = Matrix<C>::identity(size_t(1) << (numQubits - qi - 1));
+
+	Matrix fullGate = I1.tensorProduct(Sdag).tensorProduct(I2);
+
+	stateVector = fullGate * stateVector;
+}
+
 void QuantumCircuit::T(int qi) {
 	Matrix<C> T(2, 2, C(0.0, 0.0));
 	T(0, 0) = C(1.0, 0.0);
-	T(1, 1) = std::exp(C(0.0, PI_4));
+	T(1, 1) = C(INVSQRT2, INVSQRT2);
 
 	Matrix I1 = Matrix<C>::identity(size_t(1) << qi);
 	Matrix I2 = Matrix<C>::identity(size_t(1) << (numQubits - qi - 1));
 
 	Matrix fullGate = I1.tensorProduct(T).tensorProduct(I2);
+
+	stateVector = fullGate * stateVector;
+}
+
+void QuantumCircuit::Tdag(int qi) {
+	Matrix<C> Tdag(2, 2, C(0.0, 0.0));
+	Tdag(0, 0) = C(1.0, 0.0);
+	Tdag(1, 1) = C(INVSQRT2, -INVSQRT2);
+
+	Matrix I1 = Matrix<C>::identity(size_t(1) << qi);
+	Matrix I2 = Matrix<C>::identity(size_t(1) << (numQubits - qi - 1));
+
+	Matrix fullGate = I1.tensorProduct(Tdag).tensorProduct(I2);
 
 	stateVector = fullGate * stateVector;
 }
