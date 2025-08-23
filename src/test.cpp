@@ -70,11 +70,20 @@ int main() {
 		else
 			qc.H(i);
 	}*/
-	qc.RX(0, 3.14159 / 2.0);
+
+	qc.H(0);
+	qc.H(1);
 
 	qc.printProb();
 
-	std::cout << int(qc.measure(0).bits[0]);
+	//qcf::Measurement m = qc.measure({ 0, 1 });
+	//qcf::Measurement m = qc.measure(2);
+	qcf::Measurement m = qc.measure_all();
+
+	for (int i = m.bits.size()-1; i >= 0; i--) {
+		std::cout << int(m.bits[i]);
+	}
+	std::cout << std::endl << m.probability;
 
 	while (1);
 

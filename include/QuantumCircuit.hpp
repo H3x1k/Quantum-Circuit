@@ -8,8 +8,12 @@
 namespace qcf {
 
 	struct Measurement {
-		std::vector<uint8_t> bits;
-		double probability;
+		std::vector<uint8_t> bits{};
+		double probability = 0.0;
+	};
+
+	struct MeasurementBatch {
+
 	};
 
 	class QuantumCircuit {
@@ -42,6 +46,7 @@ namespace qcf {
 		Measurement measure(int qi);
 		Measurement measure(const std::vector<size_t>& qi);
 		Measurement measure_all();
+		MeasurementBatch measure_batch(int shots);
 
 
 		void printState() const;

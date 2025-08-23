@@ -14,7 +14,7 @@
 #define PI_4     0.7853981f
 
 #define SQRT2    1.4142135f
-#define INVSQRT2 0.2132007f
+#define INVSQRT2 0.7071067f
 
 
 static std::random_device rd;
@@ -34,12 +34,12 @@ QuantumCircuit::QuantumCircuit(int numQubits)
 
 void QuantumCircuit::H(int qi) {
 
-	Matrix<C> H(2, 2, C(1.0, 0.0));
-	H = H * INVSQRT2;
-	H(1, 1) = -INVSQRT2;
-
-	Matrix I1 = Matrix<C>::identity(size_t(1) << qi);
-	Matrix I2 = Matrix<C>::identity(size_t(1) << (numQubits - qi - 1));
+	Matrix<C> H(2, 2);
+	H(0, 0) = INVSQRT2; H(0, 1) = INVSQRT2;
+	H(1, 0) = INVSQRT2; H(1, 1) = -INVSQRT2;
+	
+	Matrix I1 = Matrix<C>::identity(size_t(1) << (numQubits - qi - 1));
+	Matrix I2 = Matrix<C>::identity(size_t(1) << qi);
 
 	Matrix fullGate = I1.tensorProduct(H).tensorProduct(I2);
 
@@ -52,8 +52,8 @@ void QuantumCircuit::X(int qi) {
 	X(0, 1) = C(1.0, 0.0);
 	X(1, 0) = C(1.0, 0.0);
 
-	Matrix I1 = Matrix<C>::identity(size_t(1) << qi);
-	Matrix I2 = Matrix<C>::identity(size_t(1) << (numQubits - qi - 1));
+	Matrix I1 = Matrix<C>::identity(size_t(1) << (numQubits - qi - 1));
+	Matrix I2 = Matrix<C>::identity(size_t(1) << qi);
 
 	Matrix fullGate = I1.tensorProduct(X).tensorProduct(I2);
 
@@ -65,8 +65,8 @@ void QuantumCircuit::Y(int qi) {
 	Y(0, 1) = C(0.0, 1.0);
 	Y(1, 0) = C(0.0, 1.0);
 
-	Matrix I1 = Matrix<C>::identity(size_t(1) << qi);
-	Matrix I2 = Matrix<C>::identity(size_t(1) << (numQubits - qi - 1));
+	Matrix I1 = Matrix<C>::identity(size_t(1) << (numQubits - qi - 1));
+	Matrix I2 = Matrix<C>::identity(size_t(1) << qi);
 
 	Matrix fullGate = I1.tensorProduct(Y).tensorProduct(I2);
 
@@ -78,8 +78,8 @@ void QuantumCircuit::Z(int qi) {
 	Z(0, 0) = C(1.0, 0.0);
 	Z(1, 1) = C(-1.0, 0.0);
 
-	Matrix I1 = Matrix<C>::identity(size_t(1) << qi);
-	Matrix I2 = Matrix<C>::identity(size_t(1) << (numQubits - qi - 1));
+	Matrix I1 = Matrix<C>::identity(size_t(1) << (numQubits - qi - 1));
+	Matrix I2 = Matrix<C>::identity(size_t(1) << qi);
 
 	Matrix fullGate = I1.tensorProduct(Z).tensorProduct(I2);
 
@@ -92,8 +92,8 @@ void QuantumCircuit::S(int qi) {
 	S(0, 0) = C(1.0, 0.0);
 	S(1, 1) = C(0.0, 1.0);
 
-	Matrix I1 = Matrix<C>::identity(size_t(1) << qi);
-	Matrix I2 = Matrix<C>::identity(size_t(1) << (numQubits - qi - 1));
+	Matrix I1 = Matrix<C>::identity(size_t(1) << (numQubits - qi - 1));
+	Matrix I2 = Matrix<C>::identity(size_t(1) << qi);
 
 	Matrix fullGate = I1.tensorProduct(S).tensorProduct(I2);
 
@@ -105,8 +105,8 @@ void QuantumCircuit::Sdag(int qi) {
 	Sdag(0, 0) = C(1.0,  0.0);
 	Sdag(1, 1) = C(0.0, -1.0);
 
-	Matrix I1 = Matrix<C>::identity(size_t(1) << qi);
-	Matrix I2 = Matrix<C>::identity(size_t(1) << (numQubits - qi - 1));
+	Matrix I1 = Matrix<C>::identity(size_t(1) << (numQubits - qi - 1));
+	Matrix I2 = Matrix<C>::identity(size_t(1) << qi);
 
 	Matrix fullGate = I1.tensorProduct(Sdag).tensorProduct(I2);
 
@@ -118,8 +118,8 @@ void QuantumCircuit::T(int qi) {
 	T(0, 0) = C(1.0, 0.0);
 	T(1, 1) = C(INVSQRT2, INVSQRT2);
 
-	Matrix I1 = Matrix<C>::identity(size_t(1) << qi);
-	Matrix I2 = Matrix<C>::identity(size_t(1) << (numQubits - qi - 1));
+	Matrix I1 = Matrix<C>::identity(size_t(1) << (numQubits - qi - 1));
+	Matrix I2 = Matrix<C>::identity(size_t(1) << qi);
 
 	Matrix fullGate = I1.tensorProduct(T).tensorProduct(I2);
 
@@ -131,8 +131,8 @@ void QuantumCircuit::Tdag(int qi) {
 	Tdag(0, 0) = C(1.0, 0.0);
 	Tdag(1, 1) = C(INVSQRT2, -INVSQRT2);
 
-	Matrix I1 = Matrix<C>::identity(size_t(1) << qi);
-	Matrix I2 = Matrix<C>::identity(size_t(1) << (numQubits - qi - 1));
+	Matrix I1 = Matrix<C>::identity(size_t(1) << (numQubits - qi - 1));
+	Matrix I2 = Matrix<C>::identity(size_t(1) << qi);
 
 	Matrix fullGate = I1.tensorProduct(Tdag).tensorProduct(I2);
 
@@ -150,8 +150,8 @@ void QuantumCircuit::RX(int qi, double angle) {
 	RX(1, 0) = C(0.0, -sintheta);
 	RX(1, 1) = C(costheta,  0.0);
 
-	Matrix I1 = Matrix<C>::identity(size_t(1) << qi);
-	Matrix I2 = Matrix<C>::identity(size_t(1) << (numQubits - qi - 1));
+	Matrix I1 = Matrix<C>::identity(size_t(1) << (numQubits - qi - 1));
+	Matrix I2 = Matrix<C>::identity(size_t(1) << qi);
 
 	Matrix fullGate = I1.tensorProduct(RX).tensorProduct(I2);
 
@@ -167,9 +167,9 @@ void QuantumCircuit::RY(int qi, double angle) {
 	RY(0, 1) = C(-sintheta, 0.0);
 	RY(1, 0) = C(-sintheta, 0.0);
 	RY(1, 1) = C(costheta,  0.0);
-
-	Matrix I1 = Matrix<C>::identity(size_t(1) << qi);
-	Matrix I2 = Matrix<C>::identity(size_t(1) << (numQubits - qi - 1));
+	
+	Matrix I1 = Matrix<C>::identity(size_t(1) << (numQubits - qi - 1));
+	Matrix I2 = Matrix<C>::identity(size_t(1) << qi);
 
 	Matrix fullGate = I1.tensorProduct(RY).tensorProduct(I2);
 
@@ -182,8 +182,8 @@ void QuantumCircuit::RZ(int qi, double angle) {
 	RZ(0, 0) = 1.0 / expVal;
 	RZ(1, 1) = expVal;
 
-	Matrix I1 = Matrix<C>::identity(size_t(1) << qi);
-	Matrix I2 = Matrix<C>::identity(size_t(1) << (numQubits - qi - 1));
+	Matrix I1 = Matrix<C>::identity(size_t(1) << (numQubits - qi - 1));
+	Matrix I2 = Matrix<C>::identity(size_t(1) << qi);
 
 	Matrix fullGate = I1.tensorProduct(RZ).tensorProduct(I2);
 
@@ -202,14 +202,80 @@ Measurement QuantumCircuit::measure(int qi) {
 	}
 
 	double r = dist(gen);
-	Measurement m;
+	Measurement m{};
 	if (r < prob0) {
 		m.bits = { 0 };
 		m.probability = prob0;
-	}
-	else {
+	} else {
 		m.bits = { 1 };
 		m.probability = 1.0 - prob0;
+	}
+	return m;
+}
+
+Measurement QuantumCircuit::measure(const std::vector<size_t>& qi) {
+	const size_t k = qi.size();
+	std::vector<double> probs(numQubits, 0.0);
+
+	for (size_t i = 0; i < stateVector.rows; i++) {
+		size_t outcome = 0;
+		for (size_t j = 0; j < k; j++) {
+			size_t bit = (i >> qi[j]) & 1;
+			outcome |= (bit << j);
+		}
+		probs[outcome] += std::norm(stateVector(i, 0));
+	}
+
+	double r = dist(gen);
+	double cumulativeProb = 0.0;
+	size_t index = 0;
+	for (size_t i = 0; i < probs.size(); i++) {
+		cumulativeProb += probs[i];
+		if (r < cumulativeProb) { index = i; break; }
+	}
+
+	double norm_factor = 1.0 / std::sqrt(probs[index]);
+	for (size_t i = 0; i < stateVector.rows; i++) {
+		size_t outcome = 0;
+		for (size_t j = 0; j < k; j++) {
+			size_t bit = (i >> qi[j]) & 1;
+			outcome |= (bit << j);
+		}
+		if (outcome == index) {
+			stateVector(i, 0) *= norm_factor;
+		} else {
+			stateVector(i, 0) = C(0.0, 0.0);
+		}
+	}
+
+	Measurement m{};
+	m.bits.resize(k);
+	for (size_t i = 0; i < k; i++) {
+		m.bits[i] = (index >> i) & 1;
+	}
+	m.probability = probs[index];
+	return m;
+}
+
+Measurement QuantumCircuit::measure_all() {
+	double r = dist(gen);
+	double cumulativeProb = 0.0;
+	size_t index = 0;
+	double indexProb = 0.0;
+	for (size_t i = 0; i < stateVector.rows; i++) {
+		indexProb = std::norm(stateVector(i, 0));
+		cumulativeProb += indexProb;
+		if (r < cumulativeProb) { index = i; break; }
+	}
+
+	stateVector = Matrix<C>(stateVector.rows, 1, C(0.0, 0.0));
+	stateVector(index, 0) = C(1.0, 0.0);
+
+	Measurement m{};
+	m.probability = indexProb;
+	m.bits.resize(numQubits);
+	for (size_t i = 0; i < numQubits; i++) {
+		m.bits[i] = (index >> i) & 1;
 	}
 	return m;
 }
