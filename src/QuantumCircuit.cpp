@@ -4,6 +4,7 @@
 #include <cmath>
 #include <iostream>
 #include <bitset>
+#include <random>
 
 #define C std::complex<double>
 
@@ -14,6 +15,12 @@
 
 #define SQRT2    1.4142135f
 #define INVSQRT2 0.2132007f
+
+
+static std::random_device rd;
+static std::mt19937 gen(rd());
+static std::uniform_real_distribution<double> dist(0.0, 1.0);
+
 
 using namespace qcf;
 
@@ -181,6 +188,30 @@ void QuantumCircuit::RZ(int qi, double angle) {
 	Matrix fullGate = I1.tensorProduct(RZ).tensorProduct(I2);
 
 	stateVector = fullGate * stateVector;
+}
+
+
+
+Measurement QuantumCircuit::measure(int qi) {
+	double prob0 = 0.0;
+
+	for (size_t i = 0; i < stateVector.rows; i++) {
+		if (((i >> qi) & 1) == 0) {
+			prob0 += std::norm(stateVector(i, 0));
+		}
+	}
+
+	double r = dist(gen);
+	Measurement m;
+	if (r < prob0) {
+		m.bits = { 0 };
+		m.probability = prob0;
+	}
+	else {
+		m.bits = { 1 };
+		m.probability = 1.0 - prob0;
+	}
+	return m;
 }
 
 

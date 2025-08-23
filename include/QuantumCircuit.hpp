@@ -7,6 +7,11 @@
 
 namespace qcf {
 
+	struct Measurement {
+		std::vector<uint8_t> bits;
+		double probability;
+	};
+
 	class QuantumCircuit {
 	public:
 
@@ -31,6 +36,12 @@ namespace qcf {
 		void RX(int qi, double angle);
 		void RY(int qi, double angle);
 		void RZ(int qi, double angle);
+
+
+		// Measurement
+		Measurement measure(int qi);
+		Measurement measure(const std::vector<size_t>& qi);
+		Measurement measure_all();
 
 
 		void printState() const;

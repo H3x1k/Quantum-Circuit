@@ -74,6 +74,8 @@ int main() {
 
 	qc.printProb();
 
+	std::cout << int(qc.measure(0).bits[0]);
+
 	while (1);
 
 	return 0;
