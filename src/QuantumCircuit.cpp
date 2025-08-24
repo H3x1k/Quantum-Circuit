@@ -31,6 +31,15 @@ void Measurement::print() const {
 	std::cout << std::endl << "Probability: " << probability << std::endl;
 }
 
+void MeasurementBatch::print(bool fraction) const {
+	std::cout << "Shot Count : " << shotCount << std::endl;
+	std::cout << "Outcomes (" << (fraction ? "fraction" : "count") << ")" << std::endl;
+	for (const auto& [key, value] : counts) {
+		std::cout << key << " : " << (fraction ? (float)value / shotCount : value) << std::endl;
+	}
+	std::cout << std::endl;
+}
+
 
 QuantumCircuit::QuantumCircuit(int numQubits)
 	: numQubits(numQubits),
@@ -318,7 +327,20 @@ Measurement QuantumCircuit::measure_all(bool collapse) {
 	return m;
 }
 
+MeasurementBatch QuantumCircuit::measure_batch(const std::vector<size_t>& qi, int shots) {
+	MeasurementBatch batch{};
+	if (qi.size() == 1) {
+		size_t index = qi[0];
+		batch.shotCount = shots;
+		batch.qubits = { index };
+		for (int i = 0; i < shots; i++) {
+			Measurement m = this->measure(index, false);
+			batch.counts[(m.bits[0] == 1 ? "1" : "0")]++;
+		}
+	}
 
+	return batch;
+}
 
 
 

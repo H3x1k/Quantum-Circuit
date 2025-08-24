@@ -29,22 +29,15 @@ int main() {
 
 	*/
 
-	int nq = 2;
+	int nq = 1;
 	qcf::QuantumCircuit qc(nq);
 
 	qc.H(0);
-	qc.CNOT(0, 1);
 
 	qc.printProb();
 
-	qcf::Measurement m1 = qc.measure(0);
-	m1.print();
-	std::cout << std::endl;
-
-	qc.printProb();
-
-	qcf::Measurement m2 = qc.measure(1);
-	m2.print();
+	qcf::MeasurementBatch mb = qc.measure_batch({ 0 }, 1024);
+	mb.print();
 
 	while (1);
 

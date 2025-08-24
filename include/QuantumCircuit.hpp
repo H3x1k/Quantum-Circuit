@@ -18,6 +18,9 @@ namespace qcf {
 	struct MeasurementBatch {
 		std::vector<size_t> qubits{};
 		std::map<std::string, size_t> counts{};
+		int shotCount;
+
+		void print(bool fraction = false) const;
 	};
 
 	class QuantumCircuit {
