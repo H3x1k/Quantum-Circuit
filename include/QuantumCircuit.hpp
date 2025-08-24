@@ -41,6 +41,9 @@ namespace qcf {
 		void RY(int qi, double angle);
 		void RZ(int qi, double angle);
 
+		// Controlled Gates
+		void CNOT(int ci, int ti);
+
 
 		// Measurement
 		Measurement measure(int qi);

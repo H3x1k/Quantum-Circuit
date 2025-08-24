@@ -60,7 +60,7 @@ int main() {
 
 	*/
 
-	int nq = 5;
+	int nq = 2;
 
 	qcf::QuantumCircuit qc(nq);
 
@@ -72,18 +72,25 @@ int main() {
 	}*/
 
 	qc.H(0);
-	qc.H(1);
+	qc.CNOT(0, 1);
 
 	qc.printProb();
 
-	//qcf::Measurement m = qc.measure({ 0, 1 });
-	//qcf::Measurement m = qc.measure(2);
-	qcf::Measurement m = qc.measure_all();
+	qcf::Measurement m1 = qc.measure(0);
 
-	for (int i = m.bits.size()-1; i >= 0; i--) {
-		std::cout << int(m.bits[i]);
+	for (int i = m1.bits.size()-1; i >= 0; i--) {
+		std::cout << int(m1.bits[i]);
 	}
-	std::cout << std::endl << m.probability;
+	std::cout << std::endl << m1.probability << "\n\n";
+
+	qc.printProb();
+
+	qcf::Measurement m2 = qc.measure(1);
+
+	for (int i = m2.bits.size() - 1; i >= 0; i--) {
+		std::cout << int(m2.bits[i]);
+	}
+	std::cout << std::endl << m2.probability;
 
 	while (1);
 

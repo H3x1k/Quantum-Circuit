@@ -191,6 +191,18 @@ void QuantumCircuit::RZ(int qi, double angle) {
 }
 
 
+void QuantumCircuit::CNOT(int ci, int ti) {
+	for (size_t i = 0; i < stateVector.rows; i++) {
+		if (((i >> ci) & 1) && (((i >> ti) & 1) == 0)) {
+			size_t j = i ^ (1ull << ti);
+			C temp = stateVector(i, 0);
+			stateVector(i, 0) = stateVector(j, 0);
+			stateVector(j, 0) = temp;
+		}
+	}
+}
+
+
 
 Measurement QuantumCircuit::measure(int qi) {
 	double prob0 = 0.0;
@@ -210,6 +222,16 @@ Measurement QuantumCircuit::measure(int qi) {
 		m.bits = { 1 };
 		m.probability = 1.0 - prob0;
 	}
+
+	double norm_factor = 1.0 / std::sqrt(m.probability);
+	for (size_t i = 0; i < stateVector.rows; i++) {
+		if (((i >> qi) & 1) == m.bits[0]) {
+			stateVector(i, 0) *= norm_factor;
+		} else {
+			stateVector(i, 0) = C(0.0, 0.0);
+		}
+	}
+
 	return m;
 }
 
