@@ -29,47 +29,8 @@ int main() {
 
 	*/
 
-	/*
-
-	Matrix qubitState1(2, 1, std::complex<double>(0.0, 0.0));
-	qubitState1(0, 0) = { 1.0, 0.0 };
-	Matrix qubitState2(2, 1, std::complex<double>(0.0, 0.0));
-	qubitState2(0, 0) = { 1.0, 0.0 };
-
-	Matrix H(2, 2, std::complex<double>(1.0, 0.0));
-	H = H * (1 / sqrt(2));
-	H(1, 1) = -(1 / sqrt(2));
-
-	qubitState1.print();
-
-	qubitState1 = H * qubitState1;
-
-	qubitState1.print();
-
-	double prob0 = mag(qubitState1(0, 0));
-	double prob1 = mag(qubitState1(1, 0));
-	
-	std::cout << "Probability of measuring |0> : " << prob0 << std::endl;
-	std::cout << "Probability of measuring |1> : " << prob1 << std::endl;
-
-	qubitState1 = qubitState1.tensorProduct(qubitState1);
-
-	qubitState1 = qubitState1.tensorProduct(qubitState1);
-
-	qubitState1.print();
-
-	*/
-
 	int nq = 2;
-
 	qcf::QuantumCircuit qc(nq);
-
-	/*for (int i = 0; i < nq; i++) {
-		if (i == 0)
-			qc.NOT(i);
-		else
-			qc.H(i);
-	}*/
 
 	qc.H(0);
 	qc.CNOT(0, 1);
@@ -77,20 +38,13 @@ int main() {
 	qc.printProb();
 
 	qcf::Measurement m1 = qc.measure(0);
-
-	for (int i = m1.bits.size()-1; i >= 0; i--) {
-		std::cout << int(m1.bits[i]);
-	}
-	std::cout << std::endl << m1.probability << "\n\n";
+	m1.print();
+	std::cout << std::endl;
 
 	qc.printProb();
 
 	qcf::Measurement m2 = qc.measure(1);
-
-	for (int i = m2.bits.size() - 1; i >= 0; i--) {
-		std::cout << int(m2.bits[i]);
-	}
-	std::cout << std::endl << m2.probability;
+	m2.print();
 
 	while (1);
 

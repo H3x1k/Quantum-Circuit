@@ -24,6 +24,14 @@ static std::uniform_real_distribution<double> dist(0.0, 1.0);
 
 using namespace qcf;
 
+void Measurement::print() const {
+	std::cout << "Measured: ";
+	for (int i = bits.size() - 1; i >= 0; i--)
+		std::cout << int(bits[i]);
+	std::cout << std::endl << "Probability: " << probability << std::endl;
+}
+
+
 QuantumCircuit::QuantumCircuit(int numQubits)
 	: numQubits(numQubits),
 	stateVector((size_t(1) << numQubits), 1, C(0.0, 0.0)) {
@@ -204,7 +212,7 @@ void QuantumCircuit::CNOT(int ci, int ti) {
 
 
 
-Measurement QuantumCircuit::measure(int qi) {
+Measurement QuantumCircuit::measure(int qi, bool collapse) {
 	double prob0 = 0.0;
 
 	for (size_t i = 0; i < stateVector.rows; i++) {
@@ -223,19 +231,22 @@ Measurement QuantumCircuit::measure(int qi) {
 		m.probability = 1.0 - prob0;
 	}
 
-	double norm_factor = 1.0 / std::sqrt(m.probability);
-	for (size_t i = 0; i < stateVector.rows; i++) {
-		if (((i >> qi) & 1) == m.bits[0]) {
-			stateVector(i, 0) *= norm_factor;
-		} else {
-			stateVector(i, 0) = C(0.0, 0.0);
+	if (collapse) {
+		double norm_factor = 1.0 / std::sqrt(m.probability);
+		for (size_t i = 0; i < stateVector.rows; i++) {
+			if (((i >> qi) & 1) == m.bits[0]) {
+				stateVector(i, 0) *= norm_factor;
+			}
+			else {
+				stateVector(i, 0) = C(0.0, 0.0);
+			}
 		}
 	}
 
 	return m;
 }
 
-Measurement QuantumCircuit::measure(const std::vector<size_t>& qi) {
+Measurement QuantumCircuit::measure(const std::vector<size_t>& qi, bool collapse) {
 	const size_t k = qi.size();
 	std::vector<double> probs(numQubits, 0.0);
 
@@ -256,17 +267,20 @@ Measurement QuantumCircuit::measure(const std::vector<size_t>& qi) {
 		if (r < cumulativeProb) { index = i; break; }
 	}
 
-	double norm_factor = 1.0 / std::sqrt(probs[index]);
-	for (size_t i = 0; i < stateVector.rows; i++) {
-		size_t outcome = 0;
-		for (size_t j = 0; j < k; j++) {
-			size_t bit = (i >> qi[j]) & 1;
-			outcome |= (bit << j);
-		}
-		if (outcome == index) {
-			stateVector(i, 0) *= norm_factor;
-		} else {
-			stateVector(i, 0) = C(0.0, 0.0);
+	if (collapse) {
+		double norm_factor = 1.0 / std::sqrt(probs[index]);
+		for (size_t i = 0; i < stateVector.rows; i++) {
+			size_t outcome = 0;
+			for (size_t j = 0; j < k; j++) {
+				size_t bit = (i >> qi[j]) & 1;
+				outcome |= (bit << j);
+			}
+			if (outcome == index) {
+				stateVector(i, 0) *= norm_factor;
+			}
+			else {
+				stateVector(i, 0) = C(0.0, 0.0);
+			}
 		}
 	}
 
@@ -279,7 +293,7 @@ Measurement QuantumCircuit::measure(const std::vector<size_t>& qi) {
 	return m;
 }
 
-Measurement QuantumCircuit::measure_all() {
+Measurement QuantumCircuit::measure_all(bool collapse) {
 	double r = dist(gen);
 	double cumulativeProb = 0.0;
 	size_t index = 0;
@@ -290,8 +304,10 @@ Measurement QuantumCircuit::measure_all() {
 		if (r < cumulativeProb) { index = i; break; }
 	}
 
-	stateVector = Matrix<C>(stateVector.rows, 1, C(0.0, 0.0));
-	stateVector(index, 0) = C(1.0, 0.0);
+	if (collapse) {
+		stateVector = Matrix<C>(stateVector.rows, 1, C(0.0, 0.0));
+		stateVector(index, 0) = C(1.0, 0.0);
+	}
 
 	Measurement m{};
 	m.probability = indexProb;
@@ -301,6 +317,8 @@ Measurement QuantumCircuit::measure_all() {
 	}
 	return m;
 }
+
+
 
 
 
