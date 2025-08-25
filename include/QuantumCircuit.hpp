@@ -8,6 +8,10 @@
 
 namespace qcf {
 
+	enum class OperationType {
+		H, X, Y, Z, S, Sdag, T, Tdag, RX, RY, RZ, CNOT, Measure
+	};
+
 	struct Measurement {
 		std::vector<uint8_t> bits{};
 		double probability = 0.0;
@@ -23,11 +27,18 @@ namespace qcf {
 		void print(bool fraction = false) const;
 	};
 
+	struct Operation {
+		OperationType type;
+		std::vector<int> qubits{};
+		double parameter = 0.0;
+	};
+
 	class QuantumCircuit {
 	public:
 
 		size_t numQubits;
 		Matrix<std::complex<double>> stateVector;
+		std::vector<Operation> operations;
 
 		QuantumCircuit(int numQubits);
 		
@@ -56,7 +67,7 @@ namespace qcf {
 		// Display
 		void printState() const;
 		void printProb() const;
-		void printDiagram();
+		void printDiagram() const;
 	};
 
 }

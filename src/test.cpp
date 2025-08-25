@@ -7,28 +7,7 @@
 #include "Matrix.hpp"
 //#include "Gate.hpp"
 
-double static mag(std::complex<double> z) {
-	return z.real() * z.real() + z.imag() * z.imag();
-}
-
 int main() {
-
-	/*
-	
-	QuantumCircuit qc(qn (number of qubits), ? cn (number of cbits))
-
-	qc.<single qubit gate symbol>( qi (qubit index) or qi[] (multiple target qubits) )
-	// H = Hadamard
-
-	qc.<controlled gate symbol>( qi[] (indices of control qubits), qi (qubit index) or qi[] (multiple target qubits) )
-
-	qc.<multi-qubit gate symbol>( qi[] (multiple target qubits) )
-
-	qc.addGate() // multiple options
-
-
-	*/
-
 	int nq = 1;
 	qcf::QuantumCircuit qc(nq);
 
@@ -38,6 +17,23 @@ int main() {
 
 	qcf::MeasurementBatch mb = qc.measure_batch({ 0 }, 1024);
 	mb.print();
+
+
+
+	char he = (char)196;
+	char ve = (char)179;
+	char tlc = (char)218;
+	char trc = (char)191;
+	char blc = (char)192;
+	char brc = (char)217;
+	char vel = (char)180;
+	char ver = (char)195;
+
+	std::cout << "    " << tlc << he << he << he << trc << " " << std::endl;
+	std::cout << "q0 " << he << vel << " " << "H" << " " << ver << he << std::endl;
+	std::cout << "    " << blc << he << he << he << brc << " " << std::endl;
+
+
 
 	while (1);
 

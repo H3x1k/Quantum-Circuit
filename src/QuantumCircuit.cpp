@@ -61,6 +61,8 @@ void QuantumCircuit::H(int qi) {
 	Matrix fullGate = I1.tensorProduct(H).tensorProduct(I2);
 
 	stateVector = fullGate * stateVector;
+
+	operations.push_back({ OperationType::H, {qi} });
 }
 
 void QuantumCircuit::X(int qi) {
@@ -75,6 +77,8 @@ void QuantumCircuit::X(int qi) {
 	Matrix fullGate = I1.tensorProduct(X).tensorProduct(I2);
 
 	stateVector = fullGate * stateVector;
+
+	operations.push_back({ OperationType::X, {qi} });
 }
 
 void QuantumCircuit::Y(int qi) {
@@ -88,6 +92,8 @@ void QuantumCircuit::Y(int qi) {
 	Matrix fullGate = I1.tensorProduct(Y).tensorProduct(I2);
 
 	stateVector = fullGate * stateVector;
+
+	operations.push_back({ OperationType::Y, {qi} });
 }
 
 void QuantumCircuit::Z(int qi) {
@@ -101,6 +107,8 @@ void QuantumCircuit::Z(int qi) {
 	Matrix fullGate = I1.tensorProduct(Z).tensorProduct(I2);
 
 	stateVector = fullGate * stateVector;
+
+	operations.push_back({ OperationType::Z, {qi} });
 }
 
 
@@ -115,6 +123,8 @@ void QuantumCircuit::S(int qi) {
 	Matrix fullGate = I1.tensorProduct(S).tensorProduct(I2);
 
 	stateVector = fullGate * stateVector;
+
+	operations.push_back({ OperationType::S, {qi} });
 }
 
 void QuantumCircuit::Sdag(int qi) {
@@ -128,6 +138,8 @@ void QuantumCircuit::Sdag(int qi) {
 	Matrix fullGate = I1.tensorProduct(Sdag).tensorProduct(I2);
 
 	stateVector = fullGate * stateVector;
+
+	operations.push_back({ OperationType::Sdag, {qi} });
 }
 
 void QuantumCircuit::T(int qi) {
@@ -141,6 +153,8 @@ void QuantumCircuit::T(int qi) {
 	Matrix fullGate = I1.tensorProduct(T).tensorProduct(I2);
 
 	stateVector = fullGate * stateVector;
+
+	operations.push_back({ OperationType::T, {qi} });
 }
 
 void QuantumCircuit::Tdag(int qi) {
@@ -154,6 +168,8 @@ void QuantumCircuit::Tdag(int qi) {
 	Matrix fullGate = I1.tensorProduct(Tdag).tensorProduct(I2);
 
 	stateVector = fullGate * stateVector;
+
+	operations.push_back({ OperationType::Tdag, {qi} });
 }
 
 
@@ -173,6 +189,8 @@ void QuantumCircuit::RX(int qi, double angle) {
 	Matrix fullGate = I1.tensorProduct(RX).tensorProduct(I2);
 
 	stateVector = fullGate * stateVector;
+
+	operations.push_back({ OperationType::RX, {qi}, angle });
 }
 
 void QuantumCircuit::RY(int qi, double angle) {
@@ -191,6 +209,8 @@ void QuantumCircuit::RY(int qi, double angle) {
 	Matrix fullGate = I1.tensorProduct(RY).tensorProduct(I2);
 
 	stateVector = fullGate * stateVector;
+
+	operations.push_back({ OperationType::RY, {qi}, angle });
 }
 
 void QuantumCircuit::RZ(int qi, double angle) {
@@ -205,6 +225,8 @@ void QuantumCircuit::RZ(int qi, double angle) {
 	Matrix fullGate = I1.tensorProduct(RZ).tensorProduct(I2);
 
 	stateVector = fullGate * stateVector;
+
+	operations.push_back({ OperationType::RZ, {qi}, angle });
 }
 
 
@@ -217,6 +239,8 @@ void QuantumCircuit::CNOT(int ci, int ti) {
 			stateVector(j, 0) = temp;
 		}
 	}
+
+	operations.push_back({ OperationType::CNOT, {ci, ti} });
 }
 
 
@@ -251,6 +275,8 @@ Measurement QuantumCircuit::measure(int qi, bool collapse) {
 			}
 		}
 	}
+
+	operations.push_back({ OperationType::Measure, {qi} });
 
 	return m;
 }
@@ -299,6 +325,7 @@ Measurement QuantumCircuit::measure(const std::vector<size_t>& qi, bool collapse
 		m.bits[i] = (index >> i) & 1;
 	}
 	m.probability = probs[index];
+
 	return m;
 }
 
@@ -358,4 +385,8 @@ void QuantumCircuit::printProb() const {
 			std::cout << "> : " << prob << std::endl;
 		}
 	}
+}
+
+void QuantumCircuit::printDiagram() const {
+
 }
