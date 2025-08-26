@@ -392,11 +392,11 @@ void QuantumCircuit::printProb() const {
 void QuantumCircuit::printDiagram() const {
 	const int numOps = operations.size();
 	const int rows = numQubits * 6 - 1;
-	const int cols = numOps * 7 + 5 * (numOps - 1) + 5;
+	const int cols = (numOps - 1) * 7 + 12;
 	std::vector<std::vector<char>> canvas(rows, std::vector<char>(cols, ' '));
 	
 	for (int i = 0; i < numQubits; i++) {
-		int y = 6 * i + 3;
+		int y = 3 * i + 1;
 		canvas[y][0] = 'q';
 		canvas[y][1] = '0' + i;
 		canvas[y][2] = ' ';
@@ -404,7 +404,52 @@ void QuantumCircuit::printDiagram() const {
 			canvas[y][x] = (char)196;
 	}
 
-	
+	for (int i = 0; i < numOps; i++) {
+		int x = i * 7 + 7;
+		switch (operations[i].type) {
+		case OperationType::H: {
+			int index = operations[i].qubits[0];
+			int y = 3 * index + 1;
+
+			/*
+			char he = (char)196;
+			char ve = (char)179;
+			char tlc = (char)218;
+			char trc = (char)191;
+			char blc = (char)192;
+			char brc = (char)217;
+			char vel = (char)180;
+			char ver = (char)195;
+
+			std::cout << "    " << tlc << he << he << he << trc << " " << std::endl;
+			std::cout << "q0 " << he << vel << " " << "H" << " " << ver << he << std::endl;
+			std::cout << "    " << blc << he << he << he << brc << " " << std::endl;
+			*/
+
+			canvas[y - 1][x - 2] = (char)218;
+			canvas[y - 1][x - 1] = (char)196;
+			canvas[y - 1][x] = (char)196;
+			canvas[y - 1][x + 1] = (char)196;
+			canvas[y - 1][x + 2] = (char)191;
+
+			canvas[y][x - 2] = (char)180;
+			canvas[y][x - 1] = ' ';
+			canvas[y][x] = 'H';
+			canvas[y][x + 1] = ' ';
+			canvas[y][x + 2] = (char)195;
+
+			canvas[y + 1][x - 2] = (char)192;
+			canvas[y + 1][x - 1] = (char)196;
+			canvas[y + 1][x] = (char)196;
+			canvas[y + 1][x + 1] = (char)196;
+			canvas[y + 1][x + 2] = (char)217;
+
+			break;
+		}
+		default:
+			break;
+		}
+	}
 
 
 	for (int y = 0; y < rows; y++) {
