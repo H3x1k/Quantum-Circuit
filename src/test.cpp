@@ -1,18 +1,11 @@
-#include <vector>
-#include <complex>
-#include <cmath>
-#include <iostream>
-
 #include "QuantumCircuit.hpp"
-#include "Matrix.hpp"
-//#include "Gate.hpp"
 
 int main() {
 	int nq = 2;
 	qcf::QuantumCircuit qc(nq);
 
 	qc.H(0);
-	qc.H(0);
+	qc.CNOT(0, 1);
 
 	qc.printProb();
 
