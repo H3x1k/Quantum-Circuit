@@ -18,8 +18,10 @@ int main() {
 	qcf::MeasurementBatch mb = qc.measure_batch({ 0 }, 1024);
 	mb.print();
 
+	qc.printDiagram();
 
 
+	/*
 	char he = (char)196;
 	char ve = (char)179;
 	char tlc = (char)218;
@@ -32,6 +34,7 @@ int main() {
 	std::cout << "    " << tlc << he << he << he << trc << " " << std::endl;
 	std::cout << "q0 " << he << vel << " " << "H" << " " << ver << he << std::endl;
 	std::cout << "    " << blc << he << he << he << brc << " " << std::endl;
+	*/
 
 
 

@@ -59,9 +59,9 @@ namespace qcf {
 		void CNOT(int ci, int ti);
 
 		// Measurement
-		Measurement measure(int qi, bool collapse = true);
-		Measurement measure(const std::vector<size_t>& qi, bool collapse = true);
-		Measurement measure_all(bool collapse = true);
+		Measurement measure(int qi, bool collapse = true, bool saveOp = true);
+		Measurement measure(const std::vector<size_t>& qi, bool collapse = true, bool saveOp = true);
+		Measurement measure_all(bool collapse = true, bool saveOp = true);
 		MeasurementBatch measure_batch(const std::vector<size_t>& qi, int shots = 100);
 
 		// Display

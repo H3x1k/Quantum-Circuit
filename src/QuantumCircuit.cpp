@@ -45,6 +45,7 @@ QuantumCircuit::QuantumCircuit(int numQubits)
 	: numQubits(numQubits),
 	stateVector((size_t(1) << numQubits), 1, C(0.0, 0.0)) {
 	stateVector(0, 0) = C(1.0, 0.0);
+	operations = {};
 }
 
 
@@ -245,7 +246,7 @@ void QuantumCircuit::CNOT(int ci, int ti) {
 
 
 
-Measurement QuantumCircuit::measure(int qi, bool collapse) {
+Measurement QuantumCircuit::measure(int qi, bool collapse, bool saveOp) {
 	double prob0 = 0.0;
 
 	for (size_t i = 0; i < stateVector.rows; i++) {
@@ -276,12 +277,13 @@ Measurement QuantumCircuit::measure(int qi, bool collapse) {
 		}
 	}
 
-	operations.push_back({ OperationType::Measure, {qi} });
+	if (saveOp)
+		operations.push_back({ OperationType::Measure, {qi} });
 
 	return m;
 }
 
-Measurement QuantumCircuit::measure(const std::vector<size_t>& qi, bool collapse) {
+Measurement QuantumCircuit::measure(const std::vector<size_t>& qi, bool collapse, bool saveOp) {
 	const size_t k = qi.size();
 	std::vector<double> probs(numQubits, 0.0);
 
@@ -329,7 +331,7 @@ Measurement QuantumCircuit::measure(const std::vector<size_t>& qi, bool collapse
 	return m;
 }
 
-Measurement QuantumCircuit::measure_all(bool collapse) {
+Measurement QuantumCircuit::measure_all(bool collapse, bool saveOp) {
 	double r = dist(gen);
 	double cumulativeProb = 0.0;
 	size_t index = 0;
@@ -361,7 +363,7 @@ MeasurementBatch QuantumCircuit::measure_batch(const std::vector<size_t>& qi, in
 		batch.shotCount = shots;
 		batch.qubits = { index };
 		for (int i = 0; i < shots; i++) {
-			Measurement m = this->measure(index, false);
+			Measurement m = this->measure(index, false, false);
 			batch.counts[(m.bits[0] == 1 ? "1" : "0")]++;
 		}
 	}
@@ -388,5 +390,26 @@ void QuantumCircuit::printProb() const {
 }
 
 void QuantumCircuit::printDiagram() const {
+	const int numOps = operations.size();
+	const int rows = numQubits * 6 - 1;
+	const int cols = numOps * 7 + 5 * (numOps - 1) + 5;
+	std::vector<std::vector<char>> canvas(rows, std::vector<char>(cols, ' '));
+	
+	for (int i = 0; i < numQubits; i++) {
+		int y = 6 * i + 3;
+		canvas[y][0] = 'q';
+		canvas[y][1] = '0' + i;
+		canvas[y][2] = ' ';
+		for (int x = 3; x < cols; x++)
+			canvas[y][x] = (char)196;
+	}
 
+	
+
+
+	for (int y = 0; y < rows; y++) {
+		for (int x = 0; x < cols; x++)
+			std::cout << canvas[y][x];
+		std::cout << std::endl;
+	}
 }
