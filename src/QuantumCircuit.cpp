@@ -389,50 +389,72 @@ void QuantumCircuit::printProb() const {
 	}
 }
 
-void drawBoxGate(std::vector<std::vector<char>>& canvas, int x, int y, std::string c) {
+static void drawBoxGate(std::vector<std::vector<char>>& canvas, int& x, int y, std::string c) {
+	size_t l = c.length();
+
 	canvas[y - 1][x - 2] = (char)218;
 	canvas[y - 1][x - 1] = (char)196;
 
-	canvas[y - 1][x] = (char)196;
+	for (size_t i = 0; i < l; i++)
+		canvas[y - 1][x + i] = (char)196;
 
-	canvas[y - 1][x + 1] = (char)196;
-	canvas[y - 1][x + 2] = (char)191;
+	canvas[y - 1][x + l] = (char)196;
+	canvas[y - 1][x + l + 1] = (char)191;
 
 
 	canvas[y][x - 2] = (char)180;
 	canvas[y][x - 1] = ' ';
 
-	canvas[y][x] = c[0];
+	for (size_t i = 0; i < l; i++)
+		canvas[y][x + i] = c[i];
 
-	canvas[y][x + 1] = ' ';
-	canvas[y][x + 2] = (char)195;
+	canvas[y][x + l] = ' ';
+	canvas[y][x + l + 1] = (char)195;
 
 
 	canvas[y + 1][x - 2] = (char)192;
 	canvas[y + 1][x - 1] = (char)196;
 
-	canvas[y + 1][x] = (char)196;
+	for (size_t i = 0; i < l; i++)
+		canvas[y + 1][x + i] = (char)196;
 
-	canvas[y + 1][x + 1] = (char)196;
-	canvas[y + 1][x + 2] = (char)217;
+	canvas[y + 1][x + l] = (char)196;
+	canvas[y + 1][x + l + 1] = (char)217;
+
+	x = x + 6 + l;
 }
 
-void drawControlledGate(std::vector<std::vector<char>>& canvas, int x, int cy, int ty, std::string c) {
+static void drawControlledGate(std::vector<std::vector<char>>& canvas, int& x, int cy, int ty, std::string c) {
+	int bx = x;
 	drawBoxGate(canvas, x, ty, c);
-	canvas[cy][x] = (char)254;
+	canvas[cy][bx] = (char)254;
 	int y, yend, inc;
 	if (cy < ty) {
 		y = cy + 1; yend = ty - 1; inc = 1;
-		canvas[ty - 1][x] = (char)193;
+		canvas[ty - 1][bx] = (char)193;
 	} else {
 		y = ty + 2; yend = ty + 1; inc = -1;
-		canvas[ty + 1][x] = (char)194;
+		canvas[ty + 1][bx] = (char)194;
 	}
 	for (; y < yend; y += inc)
-		canvas[y][x] = (char)179;
+		canvas[y][bx] = (char)179;
+}
+
+static void extendCanvas(std::vector<std::vector<char>>& canvas, int numQubits, int amount) {
+	for (int i = 0; i < canvas.size(); i++) {
+		for (int j = 0; j < amount; j++) {
+			canvas[i].push_back(' ');
+		}
+	}
+	for (int i = 0; i < numQubits; i++) {
+		int y = 3 * i + 1;
+		for (int x = 0; x < amount; x++)
+			canvas[y].push_back((char)196);
+	}
 }
 
 
+/* Will fail if gate text is too long */
 void QuantumCircuit::printDiagram() const {
 	const int numOps = operations.size();
 	const int rows = numQubits * 6 - 1;
@@ -448,8 +470,9 @@ void QuantumCircuit::printDiagram() const {
 			canvas[y][x] = (char)196;
 	}
 
+	int x = 7;
 	for (int i = 0; i < numOps; i++) {
-		int x = i * 7 + 7;
+		//int x = i * 7 + 7;
 		switch (operations[i].type) {
 			case OperationType::H: {
 				int index = operations[i].qubits[0];
@@ -461,18 +484,21 @@ void QuantumCircuit::printDiagram() const {
 				int index = operations[i].qubits[0];
 				int y = 3 * index + 1;
 				drawBoxGate(canvas, x, y, "X");
+				//x += 7;
 				break;
 			}
 			case OperationType::Y: {
 				int index = operations[i].qubits[0];
 				int y = 3 * index + 1;
 				drawBoxGate(canvas, x, y, "Y");
+				x += 7;
 				break;
 			}
 			case OperationType::Z: {
 				int index = operations[i].qubits[0];
 				int y = 3 * index + 1;
 				drawBoxGate(canvas, x, y, "Z");
+				x += 7;
 				break;
 			}
 			case OperationType::CNOT: {
@@ -481,6 +507,7 @@ void QuantumCircuit::printDiagram() const {
 				int cy = 3 * ci + 1;
 				int ty = 3 * ti + 1;
 				drawControlledGate(canvas, x, cy, ty, "X");
+				//x += 7;
 				break;
 			}
 			default: {
