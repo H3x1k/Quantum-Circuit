@@ -389,8 +389,29 @@ void QuantumCircuit::printProb() const {
 	}
 }
 
-static void drawBoxGate(std::vector<std::vector<char>>& canvas, int& x, int y, std::string c) {
+
+
+static void extendCanvas(std::vector<std::vector<char>>& canvas, int numQubits, int amount) {
+	size_t s = canvas.size();
+	size_t w = canvas[0].size();
+	for (int i = 0; i < s; i++) {
+		for (int j = 0; j < amount; j++) {
+			canvas[i].push_back(' ');
+		}
+	}
+	for (int i = 0; i < numQubits; i++) {
+		int y = 3 * i + 1;
+		for (int x = 0; x < amount; x++)
+			canvas[y][w+x] = (char)196;
+	}
+}
+
+static void drawBoxGate(std::vector<std::vector<char>>& canvas, int& x, int y, std::string c, int numQubits) {
 	size_t l = c.length();
+
+	if (!(x + l + 3 < canvas[0].size())) {
+		extendCanvas(canvas, numQubits, l+3);
+	}
 
 	canvas[y - 1][x - 2] = (char)218;
 	canvas[y - 1][x - 1] = (char)196;
@@ -424,9 +445,9 @@ static void drawBoxGate(std::vector<std::vector<char>>& canvas, int& x, int y, s
 	x = x + 6 + l;
 }
 
-static void drawControlledGate(std::vector<std::vector<char>>& canvas, int& x, int cy, int ty, std::string c) {
+static void drawControlledGate(std::vector<std::vector<char>>& canvas, int& x, int cy, int ty, std::string c, int numQubits) {
 	int bx = x;
-	drawBoxGate(canvas, x, ty, c);
+	drawBoxGate(canvas, x, ty, c, numQubits);
 	canvas[cy][bx] = (char)254;
 	int y, yend, inc;
 	if (cy < ty) {
@@ -438,19 +459,6 @@ static void drawControlledGate(std::vector<std::vector<char>>& canvas, int& x, i
 	}
 	for (; y < yend; y += inc)
 		canvas[y][bx] = (char)179;
-}
-
-static void extendCanvas(std::vector<std::vector<char>>& canvas, int numQubits, int amount) {
-	for (int i = 0; i < canvas.size(); i++) {
-		for (int j = 0; j < amount; j++) {
-			canvas[i].push_back(' ');
-		}
-	}
-	for (int i = 0; i < numQubits; i++) {
-		int y = 3 * i + 1;
-		for (int x = 0; x < amount; x++)
-			canvas[y].push_back((char)196);
-	}
 }
 
 
@@ -477,27 +485,27 @@ void QuantumCircuit::printDiagram() const {
 			case OperationType::H: {
 				int index = operations[i].qubits[0];
 				int y = 3 * index + 1;
-				drawBoxGate(canvas, x, y, "H");
+				drawBoxGate(canvas, x, y, "H", numQubits);
 				break;
 			}
 			case OperationType::X: {
 				int index = operations[i].qubits[0];
 				int y = 3 * index + 1;
-				drawBoxGate(canvas, x, y, "X");
+				drawBoxGate(canvas, x, y, "X", numQubits);
 				//x += 7;
 				break;
 			}
 			case OperationType::Y: {
 				int index = operations[i].qubits[0];
 				int y = 3 * index + 1;
-				drawBoxGate(canvas, x, y, "Y");
+				drawBoxGate(canvas, x, y, "Y", numQubits);
 				x += 7;
 				break;
 			}
 			case OperationType::Z: {
 				int index = operations[i].qubits[0];
 				int y = 3 * index + 1;
-				drawBoxGate(canvas, x, y, "Z");
+				drawBoxGate(canvas, x, y, "Z", numQubits);
 				x += 7;
 				break;
 			}
@@ -506,7 +514,7 @@ void QuantumCircuit::printDiagram() const {
 				int ti = operations[i].qubits[1];
 				int cy = 3 * ci + 1;
 				int ty = 3 * ti + 1;
-				drawControlledGate(canvas, x, cy, ty, "X");
+				drawControlledGate(canvas, x, cy, ty, "X", numQubits);
 				//x += 7;
 				break;
 			}
@@ -517,8 +525,8 @@ void QuantumCircuit::printDiagram() const {
 	}
 
 
-	for (int y = 0; y < rows; y++) {
-		for (int x = 0; x < cols; x++)
+	for (int y = 0; y < canvas.size(); y++) {
+		for (int x = 0; x < canvas[y].size(); x++)
 			std::cout << canvas[y][x];
 		std::cout << std::endl;
 	}
