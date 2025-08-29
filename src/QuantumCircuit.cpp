@@ -492,21 +492,18 @@ void QuantumCircuit::printDiagram() const {
 				int index = operations[i].qubits[0];
 				int y = 3 * index + 1;
 				drawBoxGate(canvas, x, y, "X", numQubits);
-				//x += 7;
 				break;
 			}
 			case OperationType::Y: {
 				int index = operations[i].qubits[0];
 				int y = 3 * index + 1;
 				drawBoxGate(canvas, x, y, "Y", numQubits);
-				x += 7;
 				break;
 			}
 			case OperationType::Z: {
 				int index = operations[i].qubits[0];
 				int y = 3 * index + 1;
 				drawBoxGate(canvas, x, y, "Z", numQubits);
-				x += 7;
 				break;
 			}
 			case OperationType::CNOT: {
@@ -515,7 +512,6 @@ void QuantumCircuit::printDiagram() const {
 				int cy = 3 * ci + 1;
 				int ty = 3 * ti + 1;
 				drawControlledGate(canvas, x, cy, ty, "X", numQubits);
-				//x += 7;
 				break;
 			}
 			default: {
