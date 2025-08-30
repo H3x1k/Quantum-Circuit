@@ -5,6 +5,8 @@
 #include <iostream>
 #include <bitset>
 #include <random>
+#include <sstream>
+#include <iomanip>
 
 #define C std::complex<double>
 
@@ -389,141 +391,150 @@ void QuantumCircuit::printProb() const {
 	}
 }
 
-
-
-static void extendCanvas(std::vector<std::vector<char>>& canvas, int numQubits, int amount) {
-	size_t s = canvas.size();
-	size_t w = canvas[0].size();
-	for (int i = 0; i < s; i++) {
-		for (int j = 0; j < amount; j++) {
-			canvas[i].push_back(' ');
+static void drawControlledGate(std::vector<std::string>& canvas, int ci, int ti, std::string c, int numQubits) {
+	int l = c.length() + 4;
+	int ll = (l % 2 == 0) ? std::max(0, (l / 2) - 1) : l / 2;
+	int lr = l / 2;
+	if (ci < ti) {
+		for (int i = 0; i < numQubits; i++) {
+			int y = i * 3 + 1;
+			if (i == ci) {
+				canvas[y - 1] += std::string(l, ' ');
+				canvas[y]     += std::string(ll, char(196)) + std::string(1, char(254)) + std::string(lr, char(196));
+				canvas[y + 1] += std::string(ll, ' ') + std::string(1, char(179)) + std::string(lr, ' ');
+			} else if (i == ti) {
+				canvas[y - 1] += std::string(1, char(218)) + std::string(std::max(0, ll - 1), char(196)) + std::string(1, char(193)) + std::string(std::max(0, lr - 1), char(196)) + std::string(1, char(191));
+				canvas[y] += std::string(1, char(180)) + " " + c + " " + std::string(1, char(195));
+				canvas[y + 1] += std::string(1, char(192)) + std::string(l - 2, char(196)) + std::string(1, char(217));
+			} else if (i > ci && i < ti) {
+				canvas[y - 1] += std::string(ll, ' ') + std::string(1, char(179)) + std::string(lr, ' ');
+				canvas[y] += std::string(ll, char(196)) + std::string(1, char(197)) + std::string(lr, char(196));
+				canvas[y + 1] += std::string(ll, ' ') + std::string(1, char(179)) + std::string(lr, ' ');
+			} else {
+				canvas[y - 1] += std::string(l, ' ');
+				canvas[y] += std::string(l, char(196));
+				canvas[y + 1] += std::string(l, ' ');
+			}
+		}
+	} else {
+		for (int i = 0; i < numQubits; i++) {
+			int y = i * 3 + 1;
+			if (i == ci) {
+				canvas[y - 1] += std::string(ll, ' ') + std::string(1, char(179)) + std::string(lr, ' ');
+				canvas[y] += std::string(ll, char(196)) + std::string(1, char(254)) + std::string(lr, char(196));
+				canvas[y + 1] += std::string(l, ' ');
+			}
+			else if (i == ti) {
+				canvas[y - 1] += std::string(1, char(218)) + std::string(l - 2, char(196)) + std::string(1, char(191));
+				canvas[y] += std::string(1, char(180)) + " " + c + " " + std::string(1, char(195));
+				canvas[y + 1] += std::string(1, char(192)) + std::string(std::max(0, ll - 1), char(196)) + std::string(1, char(194)) + std::string(std::max(0, lr - 1), char(196)) + std::string(1, char(217));
+			}
+			else if (i < ci && i > ti) {
+				canvas[y - 1] += std::string(ll, ' ') + std::string(1, char(179)) + std::string(lr, ' ');
+				canvas[y] += std::string(ll, char(196)) + std::string(1, char(197)) + std::string(lr, char(196));
+				canvas[y + 1] += std::string(ll, ' ') + std::string(1, char(179)) + std::string(lr, ' ');
+			}
+			else {
+				canvas[y - 1] += std::string(l, ' ');
+				canvas[y] += std::string(l, char(196));
+				canvas[y + 1] += std::string(l, ' ');
+			}
 		}
 	}
-	for (int i = 0; i < numQubits; i++) {
-		int y = 3 * i + 1;
-		for (int x = 0; x < amount; x++)
-			canvas[y][w+x] = (char)196;
-	}
 }
 
-static void drawBoxGate(std::vector<std::vector<char>>& canvas, int& x, int y, std::string c, int numQubits) {
+
+static void drawBoxGate(std::vector<std::string>& canvas, int ti, std::string c, int numQubits) {
 	size_t l = c.length();
-
-	if (!(x + l + 3 < canvas[0].size())) {
-		extendCanvas(canvas, numQubits, l+3);
+	for (int i = 0; i < numQubits; i++) {
+		int y = i * 3 + 1;
+		if (i == ti) {
+			canvas[y - 1] += std::string(1, char(218)) + std::string(l + 2, char(196)) + std::string(1, char(191));
+			canvas[y]     += std::string(1, char(180)) + " " + c + " " + std::string(1, char(195));
+			canvas[y + 1] += std::string(1, char(192)) + std::string(l + 2, char(196)) + std::string(1, char(217));
+		} else {
+			canvas[y - 1] += std::string(l + 4, ' ');
+			canvas[y]     += std::string(l + 4, char(196));
+			canvas[y + 1] += std::string(l + 4, ' ');
+		}
 	}
-
-	canvas[y - 1][x - 2] = (char)218;
-	canvas[y - 1][x - 1] = (char)196;
-
-	for (size_t i = 0; i < l; i++)
-		canvas[y - 1][x + i] = (char)196;
-
-	canvas[y - 1][x + l] = (char)196;
-	canvas[y - 1][x + l + 1] = (char)191;
-
-
-	canvas[y][x - 2] = (char)180;
-	canvas[y][x - 1] = ' ';
-
-	for (size_t i = 0; i < l; i++)
-		canvas[y][x + i] = c[i];
-
-	canvas[y][x + l] = ' ';
-	canvas[y][x + l + 1] = (char)195;
-
-
-	canvas[y + 1][x - 2] = (char)192;
-	canvas[y + 1][x - 1] = (char)196;
-
-	for (size_t i = 0; i < l; i++)
-		canvas[y + 1][x + i] = (char)196;
-
-	canvas[y + 1][x + l] = (char)196;
-	canvas[y + 1][x + l + 1] = (char)217;
-
-	x = x + 6 + l;
 }
 
-static void drawControlledGate(std::vector<std::vector<char>>& canvas, int& x, int cy, int ty, std::string c, int numQubits) {
-	int bx = x;
-	drawBoxGate(canvas, x, ty, c, numQubits);
-	canvas[cy][bx] = (char)254;
-	int y, yend, inc;
-	if (cy < ty) {
-		y = cy + 1; yend = ty - 1; inc = 1;
-		canvas[ty - 1][bx] = (char)193;
-	} else {
-		y = ty + 2; yend = ty + 1; inc = -1;
-		canvas[ty + 1][bx] = (char)194;
-	}
-	for (; y < yend; y += inc)
-		canvas[y][bx] = (char)179;
+static std::string doubleToString(double value, int precision) {
+	std::ostringstream out;
+	out << std::fixed << std::setprecision(precision) << value;
+	std::string s = out.str();
+	s.erase(s.find_last_not_of('0') + 1, std::string::npos);
+	if (!s.empty() && s.back() == '.') s.pop_back();
+	return s;
 }
 
-
-/* Will fail if gate text is too long */
 void QuantumCircuit::printDiagram() const {
 	const int numOps = operations.size();
-	const int rows = numQubits * 6 - 1;
-	const int cols = (numOps - 1) * 7 + 12;
-	std::vector<std::vector<char>> canvas(rows, std::vector<char>(cols, ' '));
-	
-	for (int i = 0; i < numQubits; i++) {
-		int y = 3 * i + 1;
-		canvas[y][0] = 'q';
-		canvas[y][1] = '0' + i;
-		canvas[y][2] = ' ';
-		for (int x = 3; x < cols; x++)
-			canvas[y][x] = (char)196;
-	}
+	const int rows = numQubits * 3;
 
-	int x = 7;
-	for (int i = 0; i < numOps; i++) {
-		//int x = i * 7 + 7;
-		switch (operations[i].type) {
-			case OperationType::H: {
-				int index = operations[i].qubits[0];
-				int y = 3 * index + 1;
-				drawBoxGate(canvas, x, y, "H", numQubits);
-				break;
-			}
-			case OperationType::X: {
-				int index = operations[i].qubits[0];
-				int y = 3 * index + 1;
-				drawBoxGate(canvas, x, y, "X", numQubits);
-				break;
-			}
-			case OperationType::Y: {
-				int index = operations[i].qubits[0];
-				int y = 3 * index + 1;
-				drawBoxGate(canvas, x, y, "Y", numQubits);
-				break;
-			}
-			case OperationType::Z: {
-				int index = operations[i].qubits[0];
-				int y = 3 * index + 1;
-				drawBoxGate(canvas, x, y, "Z", numQubits);
-				break;
-			}
-			case OperationType::CNOT: {
-				int ci = operations[i].qubits[0];
-				int ti = operations[i].qubits[1];
-				int cy = 3 * ci + 1;
-				int ty = 3 * ti + 1;
-				drawControlledGate(canvas, x, cy, ty, "X", numQubits);
-				break;
-			}
-			default: {
-				break;
-			}
+	std::vector<std::string> canvas(rows, "");
+
+	for (int i = 0; i < rows; i++) {
+		if ((i - 1) % 3 == 0) {
+			int qn = (i - 1) / 3;
+			canvas[i] += "q" + std::to_string(qn) + " " + char(196);
+		} else {
+			canvas[i] += "    ";
 		}
 	}
 
+	for (int i = 0; i < numOps; i++) {
+		switch (operations[i].type) {
+		case OperationType::H: {
+			drawBoxGate(canvas, operations[i].qubits[0], "H", numQubits);
+			break;
+		}
+		case OperationType::X: {
+			drawBoxGate(canvas, operations[i].qubits[0], "X", numQubits);
+			break;
+		}
+		case OperationType::Y: {
+			drawBoxGate(canvas, operations[i].qubits[0], "Y", numQubits);
+			break;
+		}
+		case OperationType::Z: {
+			drawBoxGate(canvas, operations[i].qubits[0], "Z", numQubits);
+			break;
+		}
+		case OperationType::RX: {
+			std::string rparam = "RX(" + doubleToString(operations[i].parameter, 3) + ")";
+			drawBoxGate(canvas, operations[i].qubits[0], rparam, numQubits);
+			break;
+		}
+		case OperationType::RY: {
+			std::string rparam = "RY(" + doubleToString(operations[i].parameter, 3) + ")";
+			drawBoxGate(canvas, operations[i].qubits[0], rparam, numQubits);
+			break;
+		}
+		case OperationType::RZ: {
+			std::string rparam = "RZ(" + doubleToString(operations[i].parameter, 3) + ")";
+			drawBoxGate(canvas, operations[i].qubits[0], rparam, numQubits);
+			break;
+		}
+		case OperationType::CNOT: {
+			int ci = operations[i].qubits[0];
+			int ti = operations[i].qubits[1];
+			drawControlledGate(canvas, ci, ti, "X", numQubits);
+			break;
+		}
+		default: {
+			break;
+		}
+		}
+	}
 
-	for (int y = 0; y < canvas.size(); y++) {
-		for (int x = 0; x < canvas[y].size(); x++)
-			std::cout << canvas[y][x];
-		std::cout << std::endl;
+	for (int i = 0; i < numQubits; i++) {
+		int y = i * 3 + 1;
+		canvas[y - 1] += " "; canvas[y] += char(196); canvas[y + 1] += " ";
+	}
+
+	for (int i = 0; i < canvas.size(); i++) {
+		std::cout << canvas[i] << std::endl;
 	}
 }

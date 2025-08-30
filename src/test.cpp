@@ -1,11 +1,12 @@
 #include "QuantumCircuit.hpp"
 
 int main() {
-	int nq = 2;
+	int nq = 4;
 	qcf::QuantumCircuit qc(nq);
 
 	qc.H(0);
-	qc.CNOT(0, 1);
+	qc.RX(2, 1.57);
+	qc.CNOT(1, 3);
 
 	qc.printProb();
 
