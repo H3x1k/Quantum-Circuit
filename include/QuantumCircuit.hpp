@@ -10,7 +10,7 @@
 namespace qcf {
 
 	enum class OperationType {
-		H, X, Y, Z, S, Sdag, T, Tdag, RX, RY, RZ, CNOT, Measure
+		H, X, Y, Z, S, Sdag, T, Tdag, RX, RY, RZ, CNOT, CZ, Measure
 	};
 
 	struct Measurement {
@@ -58,6 +58,7 @@ namespace qcf {
 		void RZ(int qi, Angle angle);
 		// Controlled Gates
 		void CNOT(int ci, int ti);
+		void CZ(int ci, int ti);
 
 		// Measurement
 		Measurement measure(int qi, bool collapse = true, bool saveOp = true);

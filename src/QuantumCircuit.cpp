@@ -235,15 +235,25 @@ void QuantumCircuit::RZ(int qi, Angle angle) {
 
 void QuantumCircuit::CNOT(int ci, int ti) {
 	for (size_t i = 0; i < stateVector.rows; i++) {
-		if (((i >> ci) & 1) && (((i >> ti) & 1) == 0)) {
+		if (((i >> ci) & 1) == 1) {
 			size_t j = i ^ (1ull << ti);
-			C temp = stateVector(i, 0);
-			stateVector(i, 0) = stateVector(j, 0);
-			stateVector(j, 0) = temp;
+			if (i < j) {
+				std::swap(stateVector(i, 0), stateVector(j, 0));
+			}
 		}
 	}
 
 	operations.push_back({ OperationType::CNOT, {ci, ti} });
+}
+
+void QuantumCircuit::CZ(int ci, int ti) {
+	for (size_t i = 0; i < stateVector.rows; i++) {
+		if (((i >> ci) & 1) && ((i >> ti) & 1)) {
+			stateVector(i, 0) *= -1;
+		}
+	}
+
+	operations.push_back({ OperationType::CZ, {ci, ti} });
 }
 
 
@@ -521,6 +531,12 @@ void QuantumCircuit::printDiagram() const {
 			int ci = operations[i].qubits[0];
 			int ti = operations[i].qubits[1];
 			drawControlledGate(canvas, ci, ti, "X", numQubits);
+			break;
+		}
+		case OperationType::CZ: {
+			int ci = operations[i].qubits[0];
+			int ti = operations[i].qubits[1];
+			drawControlledGate(canvas, ci, ti, "Z", numQubits);
 			break;
 		}
 		default: {
