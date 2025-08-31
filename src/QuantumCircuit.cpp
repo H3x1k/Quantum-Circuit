@@ -176,9 +176,9 @@ void QuantumCircuit::Tdag(int qi) {
 }
 
 
-void QuantumCircuit::RX(int qi, double angle) {
+void QuantumCircuit::RX(int qi, Angle angle) {
 	Matrix<C> RX(2, 2, C(0.0, 0.0));
-	double theta = angle / 2;
+	double theta = angle.get() / 2;
 	double costheta = cos(theta);
 	double sintheta = sin(theta);
 	RX(0, 0) = C(costheta,  0.0);
@@ -193,12 +193,12 @@ void QuantumCircuit::RX(int qi, double angle) {
 
 	stateVector = fullGate * stateVector;
 
-	operations.push_back({ OperationType::RX, {qi}, angle });
+	operations.push_back({ OperationType::RX, {qi}, angle.get() });
 }
 
-void QuantumCircuit::RY(int qi, double angle) {
+void QuantumCircuit::RY(int qi, Angle angle) {
 	Matrix<C> RY(2, 2, C(0.0, 0.0));
-	double theta = angle / 2;
+	double theta = angle.get() / 2;
 	double costheta = cos(theta);
 	double sintheta = sin(theta);
 	RY(0, 0) = C(costheta,  0.0);
@@ -213,12 +213,12 @@ void QuantumCircuit::RY(int qi, double angle) {
 
 	stateVector = fullGate * stateVector;
 
-	operations.push_back({ OperationType::RY, {qi}, angle });
+	operations.push_back({ OperationType::RY, {qi}, angle.get() });
 }
 
-void QuantumCircuit::RZ(int qi, double angle) {
+void QuantumCircuit::RZ(int qi, Angle angle) {
 	Matrix<C> RZ(2, 2, C(0.0, 0.0));
-	C expVal = std::exp(C(0.0, angle * 0.5));
+	C expVal = std::exp(C(0.0, angle.get() * 0.5));
 	RZ(0, 0) = 1.0 / expVal;
 	RZ(1, 1) = expVal;
 
@@ -229,7 +229,7 @@ void QuantumCircuit::RZ(int qi, double angle) {
 
 	stateVector = fullGate * stateVector;
 
-	operations.push_back({ OperationType::RZ, {qi}, angle });
+	operations.push_back({ OperationType::RZ, {qi}, angle.get() });
 }
 
 

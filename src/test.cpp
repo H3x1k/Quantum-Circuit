@@ -5,7 +5,7 @@ int main() {
 	qcf::QuantumCircuit qc(nq);
 
 	qc.H(0);
-	qc.RX(2, 1.57);
+	qc.RX(2, Angle::degrees(90));
 	qc.CNOT(1, 3);
 
 	qc.printProb();

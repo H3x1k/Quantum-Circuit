@@ -5,6 +5,7 @@
 #include <map>
 
 #include "Matrix.hpp"
+#include "Angle.hpp"
 
 namespace qcf {
 
@@ -52,9 +53,9 @@ namespace qcf {
 		void S(int qi); void Sdag(int qi);
 		void T(int qi); void Tdag(int qi);
 		// Rotation Gates
-		void RX(int qi, double angle);
-		void RY(int qi, double angle);
-		void RZ(int qi, double angle);
+		void RX(int qi, Angle angle);
+		void RY(int qi, Angle angle);
+		void RZ(int qi, Angle angle);
 		// Controlled Gates
 		void CNOT(int ci, int ti);
 
