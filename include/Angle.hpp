@@ -1,4 +1,4 @@
-// Angles header
+// Angle header
 
 #include <cmath>
 

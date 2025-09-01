@@ -16,7 +16,7 @@
 #define PI_4     0.7853981f
 
 #define SQRT2    1.4142135f
-#define INVSQRT2 0.7071067f
+#define INVSQRT2 0.707106781187f
 
 
 static std::random_device rd;

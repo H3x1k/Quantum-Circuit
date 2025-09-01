@@ -1,4 +1,4 @@
-// Angles implementation
+// Angle implementation
 
 #include "Angle.hpp"
 
