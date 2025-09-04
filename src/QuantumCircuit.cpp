@@ -52,20 +52,23 @@ QuantumCircuit::QuantumCircuit(int numQubits)
 
 
 
-void QuantumCircuit::H(int qi) {
+void QuantumCircuit::H(Index qi) {
+	for (int i = 0; i < qi.i.size(); i++) {
+		int index = qi.i[i];
+		Matrix<C> H(2, 2);
+		H(0, 0) = INVSQRT2; H(0, 1) = INVSQRT2;
+		H(1, 0) = INVSQRT2; H(1, 1) = -INVSQRT2;
 
-	Matrix<C> H(2, 2);
-	H(0, 0) = INVSQRT2; H(0, 1) = INVSQRT2;
-	H(1, 0) = INVSQRT2; H(1, 1) = -INVSQRT2;
-	
-	Matrix I1 = Matrix<C>::identity(size_t(1) << (numQubits - qi - 1));
-	Matrix I2 = Matrix<C>::identity(size_t(1) << qi);
+		Matrix I1 = Matrix<C>::identity(size_t(1) << (numQubits - index - 1));
+		Matrix I2 = Matrix<C>::identity(size_t(1) << index);
 
-	Matrix fullGate = I1.tensorProduct(H).tensorProduct(I2);
+		Matrix fullGate = I1.tensorProduct(H).tensorProduct(I2);
 
-	stateVector = fullGate * stateVector;
+		stateVector = fullGate * stateVector;
 
-	operations.push_back({ OperationType::H, {qi} });
+		operations.push_back({ OperationType::H, {index} });
+	}
+	//operations.push_back({ OperationType::H, qi });
 }
 
 void QuantumCircuit::X(int qi) {

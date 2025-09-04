@@ -6,6 +6,7 @@
 
 #include "Matrix.hpp"
 #include "Angle.hpp"
+#include "Index.hpp"
 
 namespace qcf {
 
@@ -44,7 +45,7 @@ namespace qcf {
 		QuantumCircuit(int numQubits);
 		
 		// Hadamard Gate
-		void H(int qi);
+		void H(Index qi);
 		// Pauli Gates
 		void X(int qi);
 		void Y(int qi);

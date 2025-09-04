@@ -8,14 +8,8 @@ int main() {
 	// will use single, multi, and all index types
 	// for easy use of applying gates to qubits
 
-	qc.H(0);
-	qc.Z(0);
-	qc.H(0);
+	qc.H({ {0, 1} });
 
-	qc.X(1);
-	qc.H(1);
-	qc.Z(1);
-	qc.H(1);
 	//qc.RX(2, Angle::degrees(90));
 	//qc.CZ(1, 2);
 	//qc.CNOT(1, 3);
