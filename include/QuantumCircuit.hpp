@@ -47,7 +47,7 @@ namespace qcf {
 		// Hadamard Gate
 		void H(Index qi);
 		// Pauli Gates
-		void X(int qi);
+		void X(Index qi);
 		void Y(int qi);
 		void Z(int qi);
 		// Phase Gates
@@ -60,12 +60,13 @@ namespace qcf {
 		// Controlled Gates
 		void CNOT(int ci, int ti);
 		void CZ(int ci, int ti);
+		void CZ(Index ci);
 
 		// Measurement
 		Measurement measure(int qi, bool collapse = true, bool saveOp = true);
 		Measurement measure(const std::vector<size_t>& qi, bool collapse = true, bool saveOp = true);
 		Measurement measure_all(bool collapse = true, bool saveOp = true);
-		MeasurementBatch measure_batch(const std::vector<size_t>& qi, int shots = 100);
+		MeasurementBatch measure_batch(const std::vector<size_t>& qi, int shots = 100); // mulitple doesn't work
 
 		// Display
 		void printState() const;

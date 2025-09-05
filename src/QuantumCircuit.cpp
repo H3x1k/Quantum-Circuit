@@ -71,20 +71,23 @@ void QuantumCircuit::H(Index qi) {
 	//operations.push_back({ OperationType::H, qi });
 }
 
-void QuantumCircuit::X(int qi) {
+void QuantumCircuit::X(Index qi) {
+	for (int i = 0; i < qi.i.size(); i++) {
+		int index = qi.i[i];
+		Matrix<C> X(2, 2, C(0.0, 0.0));
+		X(0, 1) = C(1.0, 0.0);
+		X(1, 0) = C(1.0, 0.0);
 
-	Matrix<C> X(2, 2, C(0.0, 0.0));
-	X(0, 1) = C(1.0, 0.0);
-	X(1, 0) = C(1.0, 0.0);
+		Matrix I1 = Matrix<C>::identity(size_t(1) << (numQubits - index - 1));
+		Matrix I2 = Matrix<C>::identity(size_t(1) << index);
 
-	Matrix I1 = Matrix<C>::identity(size_t(1) << (numQubits - qi - 1));
-	Matrix I2 = Matrix<C>::identity(size_t(1) << qi);
+		Matrix fullGate = I1.tensorProduct(X).tensorProduct(I2);
 
-	Matrix fullGate = I1.tensorProduct(X).tensorProduct(I2);
+		stateVector = fullGate * stateVector;
 
-	stateVector = fullGate * stateVector;
-
-	operations.push_back({ OperationType::X, {qi} });
+		operations.push_back({ OperationType::X, {index} });
+	}
+	//operations.push_back({ OperationType::X, {qi} });
 }
 
 void QuantumCircuit::Y(int qi) {
@@ -251,12 +254,30 @@ void QuantumCircuit::CNOT(int ci, int ti) {
 
 void QuantumCircuit::CZ(int ci, int ti) {
 	for (size_t i = 0; i < stateVector.rows; i++) {
-		if (((i >> ci) & 1) && ((i >> ti) & 1)) {
-			stateVector(i, 0) *= -1;
+		if (((i >> ci) & 1) && ((i >> ti) & 1)) { // CZ only flips |1>, CZ|1>=-|1>  CZ|0>=|0>
+			stateVector(i, 0) *= -1.0;
 		}
 	}
 
 	operations.push_back({ OperationType::CZ, {ci, ti} });
+}
+
+void QuantumCircuit::CZ(Index ci) {
+	for (size_t i = 0; i < stateVector.rows; i++) {
+		bool allOne = true;
+		for (size_t c : ci.i) {
+			if (!((i >> c) & 1)) {
+				allOne = false;
+				break;
+			}
+		}
+		if (allOne) {
+			stateVector(i, 0) *= -1.0;
+		}
+	}
+
+	std::vector<int> i(ci.i.begin(), ci.i.end()); // temp
+	operations.push_back({ OperationType::CZ, i });
 }
 
 

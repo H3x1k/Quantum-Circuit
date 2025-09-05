@@ -1,14 +1,29 @@
 #include "QuantumCircuit.hpp"
 
 int main() {
-	int nq = 2;
+	int nq = 8;
 	qcf::QuantumCircuit qc(nq);
 
-	// add index class
-	// will use single, multi, and all index types
-	// for easy use of applying gates to qubits
+	int r = 0.785398 * sqrt(1 << nq) + 1; // pi/4 * sqrt(N)   N=2^n
 
-	qc.H( {0, 1} );
+	std::vector<size_t> all;
+	for (int i = 0; i < nq; i++)
+		all.push_back(i);
+
+	// uniform state
+	qc.H(all);
+
+	for (int i = 0; i < r; i++) {
+		// oracle
+		qc.stateVector(101, 0) *= -1.0;
+
+		// diffusion
+		qc.H(all);
+		qc.X(all);
+		qc.CZ(all);
+		qc.X(all);
+		qc.H(all);
+	}
 
 	//qc.RX(2, Angle::degrees(90));
 	//qc.CZ(1, 2);
@@ -16,10 +31,10 @@ int main() {
 
 	qc.printProb();
 
-	qcf::MeasurementBatch mb = qc.measure_batch({ 0 }, 1024);
-	mb.print();
+	qcf::Measurement m = qc.measure_all();
+	m.print();
 
-	qc.printDiagram();
+	//qc.printDiagram();
 
 	while (1);
 
