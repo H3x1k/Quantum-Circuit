@@ -90,152 +90,179 @@ void QuantumCircuit::X(Index qi) {
 	//operations.push_back({ OperationType::X, {qi} });
 }
 
-void QuantumCircuit::Y(int qi) {
-	Matrix<C> Y(2, 2, C(0.0, 0.0));
-	Y(0, 1) = C(0.0, 1.0);
-	Y(1, 0) = C(0.0, 1.0);
+void QuantumCircuit::Y(Index qi) {
+	for (int i = 0; i < qi.i.size(); i++) {
+		int index = qi.i[i];
+		Matrix<C> Y(2, 2, C(0.0, 0.0));
+		Y(0, 1) = C(0.0, 1.0);
+		Y(1, 0) = C(0.0, 1.0);
 
-	Matrix I1 = Matrix<C>::identity(size_t(1) << (numQubits - qi - 1));
-	Matrix I2 = Matrix<C>::identity(size_t(1) << qi);
+		Matrix I1 = Matrix<C>::identity(size_t(1) << (numQubits - index - 1));
+		Matrix I2 = Matrix<C>::identity(size_t(1) << index);
 
-	Matrix fullGate = I1.tensorProduct(Y).tensorProduct(I2);
+		Matrix fullGate = I1.tensorProduct(Y).tensorProduct(I2);
 
-	stateVector = fullGate * stateVector;
+		stateVector = fullGate * stateVector;
 
-	operations.push_back({ OperationType::Y, {qi} });
+		operations.push_back({ OperationType::Y, {index} });
+	}
 }
 
-void QuantumCircuit::Z(int qi) {
-	Matrix<C> Z(2, 2, C(0.0, 0.0));
-	Z(0, 0) = C(1.0, 0.0);
-	Z(1, 1) = C(-1.0, 0.0);
+void QuantumCircuit::Z(Index qi) {
+	for (int i = 0; i < qi.i.size(); i++) {
+		int index = qi.i[i];
+		Matrix<C> Z(2, 2, C(0.0, 0.0));
+		Z(0, 0) = C(1.0, 0.0);
+		Z(1, 1) = C(-1.0, 0.0);
 
-	Matrix I1 = Matrix<C>::identity(size_t(1) << (numQubits - qi - 1));
-	Matrix I2 = Matrix<C>::identity(size_t(1) << qi);
+		Matrix I1 = Matrix<C>::identity(size_t(1) << (numQubits - index - 1));
+		Matrix I2 = Matrix<C>::identity(size_t(1) << index);
 
-	Matrix fullGate = I1.tensorProduct(Z).tensorProduct(I2);
+		Matrix fullGate = I1.tensorProduct(Z).tensorProduct(I2);
 
-	stateVector = fullGate * stateVector;
+		stateVector = fullGate * stateVector;
 
-	operations.push_back({ OperationType::Z, {qi} });
-}
-
-
-void QuantumCircuit::S(int qi) {
-	Matrix<C> S(2, 2, C(0.0, 0.0));
-	S(0, 0) = C(1.0, 0.0);
-	S(1, 1) = C(0.0, 1.0);
-
-	Matrix I1 = Matrix<C>::identity(size_t(1) << (numQubits - qi - 1));
-	Matrix I2 = Matrix<C>::identity(size_t(1) << qi);
-
-	Matrix fullGate = I1.tensorProduct(S).tensorProduct(I2);
-
-	stateVector = fullGate * stateVector;
-
-	operations.push_back({ OperationType::S, {qi} });
-}
-
-void QuantumCircuit::Sdag(int qi) {
-	Matrix<C> Sdag(2, 2, C(0.0, 0.0));
-	Sdag(0, 0) = C(1.0,  0.0);
-	Sdag(1, 1) = C(0.0, -1.0);
-
-	Matrix I1 = Matrix<C>::identity(size_t(1) << (numQubits - qi - 1));
-	Matrix I2 = Matrix<C>::identity(size_t(1) << qi);
-
-	Matrix fullGate = I1.tensorProduct(Sdag).tensorProduct(I2);
-
-	stateVector = fullGate * stateVector;
-
-	operations.push_back({ OperationType::Sdag, {qi} });
-}
-
-void QuantumCircuit::T(int qi) {
-	Matrix<C> T(2, 2, C(0.0, 0.0));
-	T(0, 0) = C(1.0, 0.0);
-	T(1, 1) = C(INVSQRT2, INVSQRT2);
-
-	Matrix I1 = Matrix<C>::identity(size_t(1) << (numQubits - qi - 1));
-	Matrix I2 = Matrix<C>::identity(size_t(1) << qi);
-
-	Matrix fullGate = I1.tensorProduct(T).tensorProduct(I2);
-
-	stateVector = fullGate * stateVector;
-
-	operations.push_back({ OperationType::T, {qi} });
-}
-
-void QuantumCircuit::Tdag(int qi) {
-	Matrix<C> Tdag(2, 2, C(0.0, 0.0));
-	Tdag(0, 0) = C(1.0, 0.0);
-	Tdag(1, 1) = C(INVSQRT2, -INVSQRT2);
-
-	Matrix I1 = Matrix<C>::identity(size_t(1) << (numQubits - qi - 1));
-	Matrix I2 = Matrix<C>::identity(size_t(1) << qi);
-
-	Matrix fullGate = I1.tensorProduct(Tdag).tensorProduct(I2);
-
-	stateVector = fullGate * stateVector;
-
-	operations.push_back({ OperationType::Tdag, {qi} });
+		operations.push_back({ OperationType::Z, {index} });
+	}
 }
 
 
-void QuantumCircuit::RX(int qi, Angle angle) {
-	Matrix<C> RX(2, 2, C(0.0, 0.0));
-	double theta = angle.get() / 2;
-	double costheta = cos(theta);
-	double sintheta = sin(theta);
-	RX(0, 0) = C(costheta,  0.0);
-	RX(0, 1) = C(0.0, -sintheta);
-	RX(1, 0) = C(0.0, -sintheta);
-	RX(1, 1) = C(costheta,  0.0);
+void QuantumCircuit::S(Index qi) {
+	for (int i = 0; i < qi.i.size(); i++) {
+		int index = qi.i[i];
+		Matrix<C> S(2, 2, C(0.0, 0.0));
+		S(0, 0) = C(1.0, 0.0);
+		S(1, 1) = C(0.0, 1.0);
 
-	Matrix I1 = Matrix<C>::identity(size_t(1) << (numQubits - qi - 1));
-	Matrix I2 = Matrix<C>::identity(size_t(1) << qi);
+		Matrix I1 = Matrix<C>::identity(size_t(1) << (numQubits - index - 1));
+		Matrix I2 = Matrix<C>::identity(size_t(1) << index);
 
-	Matrix fullGate = I1.tensorProduct(RX).tensorProduct(I2);
+		Matrix fullGate = I1.tensorProduct(S).tensorProduct(I2);
 
-	stateVector = fullGate * stateVector;
+		stateVector = fullGate * stateVector;
 
-	operations.push_back({ OperationType::RX, {qi}, angle.get() });
+		operations.push_back({ OperationType::S, {index} }); \
+	}
 }
 
-void QuantumCircuit::RY(int qi, Angle angle) {
-	Matrix<C> RY(2, 2, C(0.0, 0.0));
-	double theta = angle.get() / 2;
-	double costheta = cos(theta);
-	double sintheta = sin(theta);
-	RY(0, 0) = C(costheta,  0.0);
-	RY(0, 1) = C(-sintheta, 0.0);
-	RY(1, 0) = C(-sintheta, 0.0);
-	RY(1, 1) = C(costheta,  0.0);
-	
-	Matrix I1 = Matrix<C>::identity(size_t(1) << (numQubits - qi - 1));
-	Matrix I2 = Matrix<C>::identity(size_t(1) << qi);
+void QuantumCircuit::Sdag(Index qi) {
+	for (int i = 0; i < qi.i.size(); i++) {
+		int index = qi.i[i];
+		Matrix<C> Sdag(2, 2, C(0.0, 0.0));
+		Sdag(0, 0) = C(1.0, 0.0);
+		Sdag(1, 1) = C(0.0, -1.0);
 
-	Matrix fullGate = I1.tensorProduct(RY).tensorProduct(I2);
+		Matrix I1 = Matrix<C>::identity(size_t(1) << (numQubits - index - 1));
+		Matrix I2 = Matrix<C>::identity(size_t(1) << index);
 
-	stateVector = fullGate * stateVector;
+		Matrix fullGate = I1.tensorProduct(Sdag).tensorProduct(I2);
 
-	operations.push_back({ OperationType::RY, {qi}, angle.get() });
+		stateVector = fullGate * stateVector;
+
+		operations.push_back({ OperationType::Sdag, {index} });
+	}
 }
 
-void QuantumCircuit::RZ(int qi, Angle angle) {
-	Matrix<C> RZ(2, 2, C(0.0, 0.0));
-	C expVal = std::exp(C(0.0, angle.get() * 0.5));
-	RZ(0, 0) = 1.0 / expVal;
-	RZ(1, 1) = expVal;
+void QuantumCircuit::T(Index qi) {
+	for (int i = 0; i < qi.i.size(); i++) {
+		int index = qi.i[i];
+		Matrix<C> T(2, 2, C(0.0, 0.0));
+		T(0, 0) = C(1.0, 0.0);
+		T(1, 1) = C(INVSQRT2, INVSQRT2);
 
-	Matrix I1 = Matrix<C>::identity(size_t(1) << (numQubits - qi - 1));
-	Matrix I2 = Matrix<C>::identity(size_t(1) << qi);
+		Matrix I1 = Matrix<C>::identity(size_t(1) << (numQubits - index - 1));
+		Matrix I2 = Matrix<C>::identity(size_t(1) << index);
 
-	Matrix fullGate = I1.tensorProduct(RZ).tensorProduct(I2);
+		Matrix fullGate = I1.tensorProduct(T).tensorProduct(I2);
 
-	stateVector = fullGate * stateVector;
+		stateVector = fullGate * stateVector;
 
-	operations.push_back({ OperationType::RZ, {qi}, angle.get() });
+		operations.push_back({ OperationType::T, {index} });
+	}
+}
+
+void QuantumCircuit::Tdag(Index qi) {
+	for (int i = 0; i < qi.i.size(); i++) {
+		int index = qi.i[i];
+		Matrix<C> Tdag(2, 2, C(0.0, 0.0));
+		Tdag(0, 0) = C(1.0, 0.0);
+		Tdag(1, 1) = C(INVSQRT2, -INVSQRT2);
+
+		Matrix I1 = Matrix<C>::identity(size_t(1) << (numQubits - index - 1));
+		Matrix I2 = Matrix<C>::identity(size_t(1) << index);
+
+		Matrix fullGate = I1.tensorProduct(Tdag).tensorProduct(I2);
+
+		stateVector = fullGate * stateVector;
+
+		operations.push_back({ OperationType::Tdag, {index} });
+	}
+}
+
+
+void QuantumCircuit::RX(Index qi, Angle angle) {
+	for (int i = 0; i < qi.i.size(); i++) {
+		int index = qi.i[i];
+		Matrix<C> RX(2, 2, C(0.0, 0.0));
+		double theta = angle.get() / 2;
+		double costheta = cos(theta);
+		double sintheta = sin(theta);
+		RX(0, 0) = C(costheta, 0.0);
+		RX(0, 1) = C(0.0, -sintheta);
+		RX(1, 0) = C(0.0, -sintheta);
+		RX(1, 1) = C(costheta, 0.0);
+
+		Matrix I1 = Matrix<C>::identity(size_t(1) << (numQubits - index - 1));
+		Matrix I2 = Matrix<C>::identity(size_t(1) << index);
+
+		Matrix fullGate = I1.tensorProduct(RX).tensorProduct(I2);
+
+		stateVector = fullGate * stateVector;
+
+		operations.push_back({ OperationType::RX, {index}, angle.get() });
+	}
+}
+
+void QuantumCircuit::RY(Index qi, Angle angle) {
+	for (int i = 0; i < qi.i.size(); i++) {
+		int index = qi.i[i];
+		Matrix<C> RY(2, 2, C(0.0, 0.0));
+		double theta = angle.get() / 2;
+		double costheta = cos(theta);
+		double sintheta = sin(theta);
+		RY(0, 0) = C(costheta, 0.0);
+		RY(0, 1) = C(-sintheta, 0.0);
+		RY(1, 0) = C(-sintheta, 0.0);
+		RY(1, 1) = C(costheta, 0.0);
+
+		Matrix I1 = Matrix<C>::identity(size_t(1) << (numQubits - index - 1));
+		Matrix I2 = Matrix<C>::identity(size_t(1) << index);
+
+		Matrix fullGate = I1.tensorProduct(RY).tensorProduct(I2);
+
+		stateVector = fullGate * stateVector;
+
+		operations.push_back({ OperationType::RY, {index}, angle.get() });
+	}
+}
+
+void QuantumCircuit::RZ(Index qi, Angle angle) {
+	for (int i = 0; i < qi.i.size(); i++) {
+		int index = qi.i[i];
+		Matrix<C> RZ(2, 2, C(0.0, 0.0));
+		C expVal = std::exp(C(0.0, angle.get() * 0.5));
+		RZ(0, 0) = 1.0 / expVal;
+		RZ(1, 1) = expVal;
+
+		Matrix I1 = Matrix<C>::identity(size_t(1) << (numQubits - index - 1));
+		Matrix I2 = Matrix<C>::identity(size_t(1) << index);
+
+		Matrix fullGate = I1.tensorProduct(RZ).tensorProduct(I2);
+
+		stateVector = fullGate * stateVector;
+
+		operations.push_back({ OperationType::RZ, {index}, angle.get() });
+	}
 }
 
 
@@ -250,16 +277,6 @@ void QuantumCircuit::CNOT(int ci, int ti) {
 	}
 
 	operations.push_back({ OperationType::CNOT, {ci, ti} });
-}
-
-void QuantumCircuit::CZ(int ci, int ti) {
-	for (size_t i = 0; i < stateVector.rows; i++) {
-		if (((i >> ci) & 1) && ((i >> ti) & 1)) { // CZ only flips |1>, CZ|1>=-|1>  CZ|0>=|0>
-			stateVector(i, 0) *= -1.0;
-		}
-	}
-
-	operations.push_back({ OperationType::CZ, {ci, ti} });
 }
 
 void QuantumCircuit::CZ(Index ci) {

@@ -48,18 +48,17 @@ namespace qcf {
 		void H(Index qi);
 		// Pauli Gates
 		void X(Index qi);
-		void Y(int qi);
-		void Z(int qi);
+		void Y(Index qi);
+		void Z(Index qi);
 		// Phase Gates
-		void S(int qi); void Sdag(int qi);
-		void T(int qi); void Tdag(int qi);
+		void S(Index qi); void Sdag(Index qi);
+		void T(Index qi); void Tdag(Index qi);
 		// Rotation Gates
-		void RX(int qi, Angle angle);
-		void RY(int qi, Angle angle);
-		void RZ(int qi, Angle angle);
+		void RX(Index qi, Angle angle);
+		void RY(Index qi, Angle angle);
+		void RZ(Index qi, Angle angle);
 		// Controlled Gates
 		void CNOT(int ci, int ti);
-		void CZ(int ci, int ti);
 		void CZ(Index ci);
 
 		// Measurement

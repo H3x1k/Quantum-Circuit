@@ -10,13 +10,9 @@ int main() {
 	for (int i = 0; i < nq; i++)
 		all.push_back(i);
 
-	// uniform state
-	qc.H(all);
-
+	qc.H(all); // uniform state
 	for (int i = 0; i < r; i++) {
-		// oracle
-		qc.stateVector(101, 0) *= -1.0;
-
+		qc.stateVector(101, 0) *= -1.0; // oracle
 		// diffusion
 		qc.H(all);
 		qc.X(all);
@@ -24,10 +20,6 @@ int main() {
 		qc.X(all);
 		qc.H(all);
 	}
-
-	//qc.RX(2, Angle::degrees(90));
-	//qc.CZ(1, 2);
-	//qc.CNOT(1, 3);
 
 	qc.printProb();
 
