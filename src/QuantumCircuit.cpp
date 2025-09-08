@@ -298,6 +298,15 @@ void QuantumCircuit::CZ(Index ci) {
 }
 
 
+void QuantumCircuit::QFT(Index qi) {
+	for (size_t i = 0; i < qi.i.size(); i++) {
+		int index = qi.i[i];
+		H(index);
+		// work on this
+	}
+}
+
+
 
 Measurement QuantumCircuit::measure(int qi, bool collapse, bool saveOp) {
 	double prob0 = 0.0;

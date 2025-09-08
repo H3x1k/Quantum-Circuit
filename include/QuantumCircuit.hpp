@@ -61,6 +61,8 @@ namespace qcf {
 		void CNOT(int ci, int ti);
 		void CZ(Index ci);
 
+		void QFT(Index qi);
+
 		// Measurement
 		Measurement measure(int qi, bool collapse = true, bool saveOp = true);
 		Measurement measure(const std::vector<size_t>& qi, bool collapse = true, bool saveOp = true);
