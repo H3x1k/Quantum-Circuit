@@ -60,6 +60,8 @@ namespace qcf {
 		// Controlled Gates
 		void CNOT(int ci, int ti);
 		void CZ(Index ci);
+		void Rm(int ci, int ti, int m);
+		void SWAP(int q1, int q2); // only takes two qubits
 
 		void QFT(Index qi);
 
