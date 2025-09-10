@@ -297,29 +297,29 @@ void QuantumCircuit::CZ(Index ci) {
 	operations.push_back({ OperationType::CZ, i });
 }
 
-void QuantumCircuit::Rm(int ci, int ti, int m) { // needs testing
-	double theta = 2 * PI / (1ull << m);
+void QuantumCircuit::Rm(int ci, int ti, int m) {
+	double theta = 2.0 * PI / (1ull << m);
 	C phase = std::exp(C(0, theta));
 	for (size_t i = 0; i < stateVector.rows; i++)
 		if (((i >> ci) & 1) && ((i >> ti) & 1))
-			stateVector(0, i) *= phase;
+			stateVector(i, 0) *= phase;
 }
 
-void QuantumCircuit::SWAP(int q1, int q2) { // needs testing
+void QuantumCircuit::SWAP(int q1, int q2) {
 	if (q1 == q2) return;
 
 	for (size_t i = 0; i < stateVector.rows; i++) {
 		if (((i >> q1) & 1) != ((i >> q2) & 1)) {
 			size_t j = i ^ ((1ull << q1) | (1ull << q2));
 			if (i < j) { // to avoid double swapping
-				std::swap(stateVector(0, i), stateVector(0, j));
+				std::swap(stateVector(i, 0), stateVector(j, 0));
 			}
 		}
 	}
 }
 
 
-void QuantumCircuit::QFT(Index qi) { // needs testing
+void QuantumCircuit::QFT(Index qi) {
 	size_t n = qi.i.size();
 	for (size_t i = 0; i < n; i++) {
 		int index = qi.i[i];
