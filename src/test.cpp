@@ -1,13 +1,15 @@
 #include "QuantumCircuit.hpp"
 
 int main() {
-	int nq = 2;
+	int nq = 5;
 	qcf::QuantumCircuit qc(nq);
 
 	qc.X(1);
-	qc.QFT({ 0,1 });
+	qc.X(3);
+	qc.QFT({ 0,1,2,3,4 });
 
 	qc.printState();
+	qc.printProb();
 
 	/*
 	int r = 0.785398 * sqrt(1 << nq) + 1; // pi/4 * sqrt(N)   N=2^n
