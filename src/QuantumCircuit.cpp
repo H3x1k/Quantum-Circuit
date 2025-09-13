@@ -305,6 +305,14 @@ void QuantumCircuit::Rm(int ci, int ti, int m) {
 			stateVector(i, 0) *= phase;
 }
 
+void QuantumCircuit::Rmdag(int ci, int ti, int m) {
+	double theta = -2.0 * PI / (1ull << m);
+	C phase = std::exp(C(0, theta));
+	for (size_t i = 0; i < stateVector.rows; i++)
+		if (((i >> ci) & 1) && ((i >> ti) & 1))
+			stateVector(i, 0) *= phase;
+}
+
 void QuantumCircuit::SWAP(int q1, int q2) {
 	if (q1 == q2) return;
 
@@ -331,6 +339,21 @@ void QuantumCircuit::QFT(Index qi) {
 	}
 	for (size_t i = 0; i < n / 2; i++) {
 		SWAP(qi.i[i], qi.i[n - i - 1]);
+	}
+}
+
+void QuantumCircuit::IQFT(Index qi) {
+	size_t n = qi.i.size();
+	for (size_t i = 0; i < n / 2; i++) {
+		SWAP(qi.i[i], qi.i[n - i - 1]);
+	}
+	for (int i = n - 1; i >= 0; i--) {
+		int index = qi.i[i];
+		for (size_t j = n - 1; j > i; j--) {
+			int jindex = qi.i[j];
+			Rmdag(jindex, index, j - i + 1);
+		}
+		H(index);
 	}
 }
 

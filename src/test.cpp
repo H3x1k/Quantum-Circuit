@@ -7,7 +7,7 @@ int main() {
 	qc.X(3);
 	qc.X(4);
 	qc.QFT({ 0,1,2 });
-	qc.CZ({ 0,1,2,3,4 });
+	qc.IQFT({ 0,1,2 });
 
 	qc.printState();
 	qc.printProb();

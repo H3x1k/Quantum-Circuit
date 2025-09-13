@@ -60,10 +60,10 @@ namespace qcf {
 		// Controlled Gates
 		void CNOT(int ci, int ti);
 		void CZ(Index ci);
-		void Rm(int ci, int ti, int m);
+		void Rm(int ci, int ti, int m); void Rmdag(int ci, int ti, int m);
 		void SWAP(int q1, int q2); // only takes two qubits
 
-		void QFT(Index qi);
+		void QFT(Index qi); void IQFT(Index qi);
 
 		// Measurement
 		Measurement measure(int qi, bool collapse = true, bool saveOp = true);
