@@ -7,6 +7,7 @@
 #include "Matrix.hpp"
 #include "Angle.hpp"
 #include "Index.hpp"
+#include "Gate.hpp"
 
 namespace qcf {
 
@@ -62,8 +63,11 @@ namespace qcf {
 		void CZ(Index ci);
 		void Rm(int ci, int ti, int m); void Rmdag(int ci, int ti, int m);
 		void SWAP(int q1, int q2); // only takes two qubits
-
+		// Composite Gates
 		void QFT(Index qi); void IQFT(Index qi);
+		// Custom Gates
+		void apply(Gate g);
+		void apply_controlled(Gate g, Index ci);
 
 		// Measurement
 		Measurement measure(int qi, bool collapse = true, bool saveOp = true);
