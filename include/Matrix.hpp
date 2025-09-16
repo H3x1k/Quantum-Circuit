@@ -82,6 +82,57 @@ public:
         return result;
     }
 
+    Matrix<T> inverse() const {
+        if (rows != cols)
+            throw std::invalid_argument("Matrix must be square to invert.");
+
+        size_t n = rows;
+        Matrix<T> A(*this); // copy of original
+        Matrix<T> inv = Matrix<T>::identity(n);
+
+        for (size_t i = 0; i < n; ++i) {
+            // Find pivot
+            T pivot = A(i, i);
+            size_t pivotRow = i;
+            for (size_t r = i; r < n; ++r) {
+                if (std::abs(A(r, i)) > std::abs(pivot)) {
+                    pivot = A(r, i);
+                    pivotRow = r;
+                }
+            }
+
+            if (pivot == T(0))
+                throw std::runtime_error("Matrix is singular and cannot be inverted.");
+
+            // Swap rows if needed
+            if (pivotRow != i) {
+                for (size_t c = 0; c < n; ++c) {
+                    std::swap(A(i, c), A(pivotRow, c));
+                    std::swap(inv(i, c), inv(pivotRow, c));
+                }
+            }
+
+            // Normalize pivot row
+            T pivotVal = A(i, i);
+            for (size_t c = 0; c < n; ++c) {
+                A(i, c) /= pivotVal;
+                inv(i, c) /= pivotVal;
+            }
+
+            // Eliminate other rows
+            for (size_t r = 0; r < n; ++r) {
+                if (r == i) continue;
+                T factor = A(r, i);
+                for (size_t c = 0; c < n; ++c) {
+                    A(r, c) -= factor * A(i, c);
+                    inv(r, c) -= factor * inv(i, c);
+                }
+            }
+        }
+
+        return inv;
+    }
+
 
     void print() const {
         for (size_t i = 0; i < rows; ++i) {

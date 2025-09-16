@@ -7,6 +7,8 @@
 #include "Matrix.hpp"
 #include "Index.hpp"
 
+// Make sure matrix size and taget size are correct
+
 namespace qcf {
 	class Gate {
 	public:

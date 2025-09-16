@@ -358,6 +358,66 @@ void QuantumCircuit::IQFT(Index qi) {
 }
 
 
+Matrix<C> constructPermutationMatrix(int numQubits, const std::vector<size_t>& targets) {
+	int dim = 1 << numQubits; // 2^n
+	int k = targets.size();
+
+	// Record which qubits are targets
+	std::vector<int> targetPos(numQubits, -1);
+	for (int i = 0; i < k; i++) {
+		int q = targets[i];
+		if (q < 0 || q >= numQubits)
+			throw std::invalid_argument("Target qubit index out of range");
+		targetPos[q] = i; // position among targets
+	}
+
+	Matrix<C> P(dim, dim, static_cast<C>(0));
+
+	for (int basis = 0; basis < dim; basis++) {
+		int targetBits = 0;
+		int nonTargetBits = 0;
+		int nonTargetShift = 0;
+
+		// extract bits from basis
+		for (int q = 0; q < numQubits; q++) {
+			int bit = (basis >> q) & 1;
+			if (targetPos[q] != -1) {
+				// pack target qubits into lower k bits
+				targetBits |= (bit << targetPos[q]);
+			}
+			else {
+				// pack non-target qubits above them
+				nonTargetBits |= (bit << nonTargetShift);
+				nonTargetShift++;
+			}
+		}
+
+		// new index = non-targets in higher bits | targets in lower bits
+		int newIndex = (nonTargetBits << k) | targetBits;
+
+		// permutation matrix: column = old index, row = new index
+		P(newIndex, basis) = static_cast<C>(1);
+	}
+
+	return P;
+}
+
+
+void QuantumCircuit::apply(Gate g) { // needs optimization
+	int n = g.target.i.size();
+	Matrix<C> P = constructPermutationMatrix(numQubits, g.target.i);
+	Matrix<C> I = Matrix<C>::identity(numQubits - n);
+	Matrix<C> G = I.tensorProduct(g.matrix);
+	Matrix<C> U = P * G * P.inverse();
+	stateVector = U * stateVector;
+	// add operation to operations
+}
+
+void QuantumCircuit::apply_controlled(Gate g, Index ci) {
+
+}
+
+
 
 Measurement QuantumCircuit::measure(int qi, bool collapse, bool saveOp) {
 	double prob0 = 0.0;

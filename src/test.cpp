@@ -4,11 +4,6 @@ int main() {
 	int nq = 5;
 	qcf::QuantumCircuit qc(nq);
 
-	qc.X(3);
-	qc.X(4);
-	qc.QFT({ 0,1,2 });
-	qc.IQFT({ 0,1,2 });
-
 	qc.printState();
 	qc.printProb();
 
