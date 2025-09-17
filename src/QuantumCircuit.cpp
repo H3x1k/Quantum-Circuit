@@ -413,8 +413,38 @@ void QuantumCircuit::apply(Gate g) { // needs optimization
 	// add operation to operations
 }
 
-void QuantumCircuit::apply_controlled(Gate g, Index ci) {
+void QuantumCircuit::apply_controlled(Gate g, Index ci) { // only single qubit
+	int n = g.target.i.size();
+	int d = 1 << n; // dimension of target gate
 
+	// Gather control + targets
+	std::vector<size_t> allIndices = g.target.i;
+	allIndices.insert(allIndices.begin(), ci.i[0]);
+
+	// Permutation to bring control + targets to front
+	Matrix<C> P = constructPermutationMatrix(numQubits, allIndices);
+
+	// Build controlled matrix (2d x 2d)
+	Matrix<C> CU(2 * d, 2 * d, C(0));
+
+	// Top-left block = identity
+	for (int i = 0; i < d; i++)
+		CU(i, i) = C(1);
+
+	// Bottom-right block = g.matrix
+	for (int i = 0; i < d; i++)
+		for (int j = 0; j < d; j++)
+			CU(d + i, d + j) = g.matrix(i, j);
+
+	// Expand with identities on the remaining qubits
+	Matrix<C> I_rest = Matrix<C>::identity(1 << (numQubits - (n + 1)));
+	Matrix<C> U = I_rest.tensorProduct(CU);
+
+	// Permute back
+	U = P * U * P.inverse();
+	stateVector = U * stateVector;
+
+	// add to operations history
 }
 
 
