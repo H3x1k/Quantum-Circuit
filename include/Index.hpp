@@ -1,4 +1,5 @@
 // Index header
+#pragma once
 
 #include <vector>
 
