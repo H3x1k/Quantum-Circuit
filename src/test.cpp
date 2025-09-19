@@ -39,6 +39,11 @@ int main() {
 
 	qc.IQFT(Index::range(0, t));
 
+	for (int i = 0; i < 100; i++) {
+		qcf::Measurement m = qc.measure_all(false);
+		m.print();
+	}
+
 	qc.printState();
 	qc.printProb();
 
