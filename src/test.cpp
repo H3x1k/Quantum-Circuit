@@ -1,5 +1,9 @@
 #include "QuantumCircuit.hpp"
 
+// TODO:
+// add display for multi-qubit gates and multi control qubits
+// add time component for operations so that multiple gates can be displayed on one line
+
 static Matrix<std::complex<double>> modular_mult_matrix(int a, int n) {
 	using C = std::complex<double>;
 	int dim = 16;
