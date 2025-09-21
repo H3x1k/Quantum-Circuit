@@ -16,7 +16,7 @@ static Matrix<std::complex<double>> modular_mult_matrix(int a, int n) {
 }
 
 int main() {
-	const int n = 35;
+	const int n = 35; // doesnt work
 	const int a = 4;
 	const int t = 6; // number of counting qubits
 	const int q = 6; // number of work qubits
