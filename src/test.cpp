@@ -16,10 +16,10 @@ static Matrix<std::complex<double>> modular_mult_matrix(int a, int n) {
 }
 
 int main() {
-	const int n = 15;
-	const int a = 2;
-	const int t = 4; // number of counting qubits
-	const int q = 4; // number of work qubits
+	const int n = 35;
+	const int a = 4;
+	const int t = 6; // number of counting qubits
+	const int q = 6; // number of work qubits
 	int nq = t + q;
 
 	qcf::QuantumCircuit qc(nq);
