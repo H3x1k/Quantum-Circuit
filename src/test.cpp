@@ -4,9 +4,9 @@
 // add display for multi-qubit gates and multi control qubits
 // add time component for operations so that multiple gates can be displayed on one line
 
-static Matrix<std::complex<double>> modular_mult_matrix(int a, int n) {
+static Matrix<std::complex<double>> modular_mult_matrix(int a, int n, int q) {
 	using C = std::complex<double>;
-	int dim = 16;
+	int dim = 1 << q;
 	Matrix<C> m(dim, dim, C(0.0, 0.0));
 	for (int y = 0; y < dim; ++y) {
 		int result = (y * a) % n;
@@ -16,10 +16,10 @@ static Matrix<std::complex<double>> modular_mult_matrix(int a, int n) {
 }
 
 int main() {
-	const int n = 35; // doesnt work
-	const int a = 4;
-	const int t = 6; // number of counting qubits
-	const int q = 6; // number of work qubits
+	const int n = 21; // doesnt work
+	const int a = 2;
+	const int t = 5; // number of counting qubits
+	const int q = 5; // number of work qubits
 	int nq = t + q;
 
 	qcf::QuantumCircuit qc(nq);
@@ -36,7 +36,7 @@ int main() {
 		int a_exp = 1;
 		for (int j = 0; j < power; ++j)
 			a_exp = (a_exp * a) % n;
-		auto modmult = modular_mult_matrix(a_exp, n);
+		auto modmult = modular_mult_matrix(a_exp, n, q);
 		qcf::Gate modmult_gate(modmult, Index::range(t, t + q));
 		qc.apply_controlled(modmult_gate, Index({ i }));
 	}
