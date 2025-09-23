@@ -7,6 +7,7 @@
 #include <random>
 #include <sstream>
 #include <iomanip>
+#include <cassert>
 
 #define C std::complex<double>
 
@@ -413,6 +414,22 @@ void QuantumCircuit::apply(Gate g) { // needs optimization
 	// add operation to operations
 }
 
+Matrix<C> permuteMatrix(const Matrix<C>& U, const std::vector<size_t>& perm) {
+	int dim = U.rows;
+	Matrix<C> result(dim, dim);
+
+	assert(perm.size() == U.rows);  // for rows
+	for (size_t k = 0; k < perm.size(); ++k)
+		assert(perm[k] < U.rows);
+
+
+	for (int i = 0; i < dim; i++)
+		for (int j = 0; j < dim; j++)
+			result(perm[i], perm[j]) = U(i, j);
+
+	return result;
+}
+
 void QuantumCircuit::apply_controlled(Gate g, Index ci) { // only single qubit
 	int n = g.target.i.size();
 	int d = 1 << n; // dimension of target gate
@@ -441,10 +458,71 @@ void QuantumCircuit::apply_controlled(Gate g, Index ci) { // only single qubit
 	Matrix<C> U = I_rest.tensorProduct(CU);
 
 	// Permute back
-	U = P * U * P.inverse();
+	U = permuteMatrix(U, allIndices);
+	//U = P * U * P.inverse();
 	stateVector = U * stateVector;
 
 	// add to operations history
+}
+
+void QuantumCircuit::apply_controlled_test(const Gate& g, const Index& ci) {
+	int n = static_cast<int>(g.target.i.size());  // number of target qubits
+	if (n == 0) return;
+
+	size_t numStates = 1ULL << numQubits;       // total state vector size
+	size_t d = 1ULL << n;                       // size of target gate
+	size_t controlPos = ci.i[0];
+
+	// Sanity check: control qubit not in target
+	for (size_t t : g.target.i)
+		if (t == controlPos)
+			throw std::invalid_argument("Control qubit cannot be a target qubit");
+
+	// Precompute bit masks for target qubits
+	std::vector<size_t> targetMasks(n);
+	for (int k = 0; k < n; ++k)
+		targetMasks[k] = 1ULL << g.target.i[k];
+
+	// Temporary storage for amplitudes of a target block
+	std::vector<C> in(d), out(d);
+
+	// Loop over all basis states
+	for (size_t idx = 0; idx < numStates; ++idx) {
+		// Skip states where control qubit is 0
+		if (((idx >> controlPos) & 1ULL) == 0) continue;
+
+		// Compute target sub-index
+		size_t targetSub = 0;
+		for (int k = 0; k < n; ++k)
+			if (idx & targetMasks[k]) targetSub |= 1ULL << k;
+
+		// Only process each block once (targetSub == 0)
+		if (targetSub != 0) continue;
+
+		// Gather amplitudes for this block
+		for (size_t j = 0; j < d; ++j) {
+			size_t idxj = idx;
+			for (int k = 0; k < n; ++k)
+				if (j & (1ULL << k)) idxj |= targetMasks[k];
+			in[j] = stateVector(idxj, 0);
+		}
+
+		// Apply the gate: out = g.matrix * in
+		for (size_t r = 0; r < d; ++r) {
+			C acc = 0;
+			for (size_t c = 0; c < d; ++c)
+				acc += g.matrix(r, c) * in[c];
+			out[r] = acc;
+		}
+
+		// Write back results
+		for (size_t j = 0; j < d; ++j) {
+			size_t idxj = idx;
+			for (int k = 0; k < n; ++k)
+				if (j & (1ULL << k)) idxj |= targetMasks[k];
+			stateVector(idxj, 0) = out[j];
+		}
+	}
 }
 
 

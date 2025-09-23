@@ -16,7 +16,7 @@ static Matrix<std::complex<double>> modular_mult_matrix(int a, int n, int q) {
 }
 
 int main() {
-	const int n = 21; // doesnt work
+	const int n = 21;
 	const int a = 2;
 	const int t = 5; // number of counting qubits
 	const int q = 5; // number of work qubits
@@ -38,7 +38,7 @@ int main() {
 			a_exp = (a_exp * a) % n;
 		auto modmult = modular_mult_matrix(a_exp, n, q);
 		qcf::Gate modmult_gate(modmult, Index::range(t, t + q));
-		qc.apply_controlled(modmult_gate, Index({ i }));
+		qc.apply_controlled_test(modmult_gate, Index({ i }));
 	}
 
 	qc.IQFT(Index::range(0, t));
