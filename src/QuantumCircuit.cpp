@@ -8,6 +8,7 @@
 #include <sstream>
 #include <iomanip>
 #include <cassert>
+#include <map>
 
 #define C std::complex<double>
 
@@ -650,6 +651,22 @@ MeasurementBatch QuantumCircuit::measure_batch(const std::vector<size_t>& qi, in
 	}
 
 	return batch;
+}
+
+
+
+std::map<std::string, double> QuantumCircuit::probabilityDistribution() {
+	std::map<std::string, double> dist;
+	for (size_t i = 0; i < stateVector.rows; i++) {
+		std::string bitString;
+		double prob = std::norm(stateVector(i, 0));
+		for (size_t j = 0; j < numQubits; j++) {
+			char bit = ((i >> (numQubits - 1 - j)) & 1) ? '1' : '0';
+			bitString += bit;
+		}
+		dist.insert({ bitString, prob });
+	}
+	return dist;
 }
 
 

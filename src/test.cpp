@@ -1,5 +1,7 @@
 #include "QuantumCircuit.hpp"
 
+#include <iomanip>
+
 // TODO:
 // add display for multi-qubit gates and multi control qubits
 // add time component for operations so that multiple gates can be displayed on one line
@@ -9,17 +11,41 @@ static Matrix<std::complex<double>> modular_mult_matrix(int a, int n, int q) {
 	int dim = 1 << q;
 	Matrix<C> m(dim, dim, C(0.0, 0.0));
 	for (int y = 0; y < dim; ++y) {
-		int result = (y * a) % n;
+		int result;
+		if (y < n)
+			result = (y * a) % n;
+		else
+			result = y;
 		m(result, y) = C(1.0, 0.0);
 	}
 	return m;
 }
 
+void printCountingMarginals(const std::map<std::string, double>& fullDist, int t, int q) {
+	std::map<int, double> marginals;
+
+	for (auto& kv : fullDist) {
+		const std::string& state = kv.first;   // e.g. "0000100000"
+		double prob = kv.second;
+
+		// take first t bits as counting register
+		std::string countBits = state.substr(0, t);
+		int countVal = std::stoi(countBits, nullptr, 2);
+
+		marginals[countVal] += prob;
+	}
+
+	std::cout << "Marginal distribution over counting register:\n";
+	for (auto& kv : marginals) {
+		std::cout << std::setw(2) << kv.first << " : " << kv.second << "\n";
+	}
+}
+
 int main() {
 	const int n = 21;
 	const int a = 2;
-	const int t = 5; // number of counting qubits
-	const int q = 5; // number of work qubits
+	const int t = 6; // number of counting qubits
+	const int q = 6; // number of work qubits
 	int nq = t + q;
 
 	qcf::QuantumCircuit qc(nq);
@@ -48,8 +74,10 @@ int main() {
 		m.print();
 	}
 
-	qc.printState();
-	qc.printProb();
+	//qc.printState();
+	//qc.printProb();
+
+	printCountingMarginals(qc.probabilityDistribution(), t, q);
 
 	while (1);
 

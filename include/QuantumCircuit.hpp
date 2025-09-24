@@ -76,6 +76,9 @@ namespace qcf {
 		Measurement measure_all(bool collapse = true, bool saveOp = true);
 		MeasurementBatch measure_batch(const std::vector<size_t>& qi, int shots = 100); // mulitple doesn't work
 
+		// Other
+		std::map<std::string, double> probabilityDistribution();
+
 		// Display
 		void printState() const;
 		void printProb() const;
