@@ -6,6 +6,10 @@
 // add display for multi-qubit gates and multi control qubits
 // add time component for operations so that multiple gates can be displayed on one line
 
+// add multi-qubit measurement to finish shor's algorithm
+// find the highest occurring number then use continued fractions to approximate the computed fraction from c/2^w
+// then use r to compute factors of N using gcd(a^r/2 +- 1, N)
+
 static Matrix<std::complex<double>> modular_mult_matrix(int a, int n, int q) {
 	using C = std::complex<double>;
 	int dim = 1 << q;
@@ -21,7 +25,7 @@ static Matrix<std::complex<double>> modular_mult_matrix(int a, int n, int q) {
 	return m;
 }
 
-void printCountingMarginals(const std::map<std::string, double>& fullDist, int t, int q) {
+static void printCountingMarginals(const std::map<std::string, double>& fullDist, int t, int q) {
 	std::map<int, double> marginals;
 
 	for (auto& kv : fullDist) {
@@ -29,7 +33,7 @@ void printCountingMarginals(const std::map<std::string, double>& fullDist, int t
 		double prob = kv.second;
 
 		// take first t bits as counting register
-		std::string countBits = state.substr(0, t);
+		std::string countBits = state.substr(t, t+q);
 		int countVal = std::stoi(countBits, nullptr, 2);
 
 		marginals[countVal] += prob;
@@ -69,10 +73,10 @@ int main() {
 
 	qc.IQFT(Index::range(0, t));
 
-	for (int i = 0; i < 100; i++) {
-		qcf::Measurement m = qc.measure_all(false);
-		m.print();
-	}
+	//for (int i = 0; i < 100; i++) {
+	//	qcf::Measurement m = qc.measure_all(false);
+	//	m.print();
+	//}
 
 	//qc.printState();
 	//qc.printProb();
