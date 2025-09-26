@@ -33,7 +33,8 @@ static void printCountingMarginals(const std::map<std::string, double>& fullDist
 		double prob = kv.second;
 
 		// take first t bits as counting register
-		std::string countBits = state.substr(t, t+q);
+		//std::string countBits = state.substr(0, t);
+		std::string countBits = state.substr(t, t + q);
 		int countVal = std::stoi(countBits, nullptr, 2);
 
 		marginals[countVal] += prob;
@@ -46,7 +47,7 @@ static void printCountingMarginals(const std::map<std::string, double>& fullDist
 }
 
 int main() {
-	const int n = 21;
+	const int n = 15;
 	const int a = 2;
 	const int t = 6; // number of counting qubits
 	const int q = 6; // number of work qubits

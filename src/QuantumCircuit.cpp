@@ -336,7 +336,7 @@ void QuantumCircuit::QFT(Index qi) {
 		H(index);
 		for (size_t j = i + 1; j < n; j++) {
 			int jindex = qi.i[j];
-			Rm(jindex, index, j - i + 1);
+			Rm(jindex, index, j - i);
 		}
 	}
 	for (size_t i = 0; i < n / 2; i++) {
