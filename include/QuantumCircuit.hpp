@@ -68,6 +68,7 @@ namespace qcf {
 		// Custom Gates
 		void apply(Gate g);
 		void apply_controlled(Gate g, Index ci);
+		void apply_controlled2(Gate g, Index ci);
 		void apply_controlled_test(const Gate& g, const Index& ci);
 
 		// Measurement

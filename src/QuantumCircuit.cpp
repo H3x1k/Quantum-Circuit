@@ -311,7 +311,7 @@ void QuantumCircuit::Rmdag(int ci, int ti, int m) {
 	double theta = -2.0 * PI / (1ull << m);
 	C phase = std::exp(C(0, theta));
 	for (size_t i = 0; i < stateVector.rows; i++)
-		if (((i >> ci) & 1) && ((i >> ti) & 1))
+		if (((i >> ci) & 1))
 			stateVector(i, 0) *= phase;
 }
 
@@ -336,7 +336,7 @@ void QuantumCircuit::QFT(Index qi) {
 		H(index);
 		for (size_t j = i + 1; j < n; j++) {
 			int jindex = qi.i[j];
-			Rm(jindex, index, j - i);
+			Rm(jindex, index, j - i + 1);
 		}
 	}
 	for (size_t i = 0; i < n / 2; i++) {
@@ -353,7 +353,7 @@ void QuantumCircuit::IQFT(Index qi) {
 		int index = qi.i[i];
 		for (size_t j = n - 1; j > i; j--) {
 			int jindex = qi.i[j];
-			Rmdag(jindex, index, j - i + 1);
+			Rmdag(jindex, index, j - i);
 		}
 		H(index);
 	}
@@ -432,8 +432,22 @@ Matrix<C> permuteMatrix(const Matrix<C>& U, const std::vector<size_t>& perm) {
 }
 
 void QuantumCircuit::apply_controlled(Gate g, Index ci) { // only single qubit
+	int c = ci.i[0];
 	int n = g.target.i.size();
-	int d = 1 << n; // dimension of target gate
+	int d = 1 << n;
+
+	/*for (size_t i = 0; i < stateVector.rows; i++) {
+		if ((i >> c) & 1) {
+			int target_state = 0;
+			for (int j = 0; j < n; j++) {
+				if ((i >> g.target.i[i]) & 1) {
+					target_state |= (1 << j);
+				}
+			}
+
+
+		}
+	}*/
 
 	// Gather control + targets
 	std::vector<size_t> allIndices = g.target.i;
@@ -459,11 +473,75 @@ void QuantumCircuit::apply_controlled(Gate g, Index ci) { // only single qubit
 	Matrix<C> U = I_rest.tensorProduct(CU);
 
 	// Permute back
-	U = permuteMatrix(U, allIndices);
-	//U = P * U * P.inverse();
+	//U = permuteMatrix(U, allIndices);
+	U = P.inverse() * U * P;
 	stateVector = U * stateVector;
 
 	// add to operations history
+}
+
+void QuantumCircuit::apply_controlled2(Gate g, Index ci) {
+	int control = ci.i[0];
+	int n = g.target.i.size();
+
+	// Create a copy of the state vector to modify
+	Matrix<C> newStateVector = stateVector;
+
+	// For each basis state
+	for (size_t state = 0; state < stateVector.rows; state++) {
+		// Check if control qubit is 1
+		if ((state >> control) & 1) {
+			// Extract target qubit values to form target_state index
+			int target_state = 0;
+			for (int i = 0; i < n; i++) {
+				if ((state >> g.target.i[i]) & 1) {
+					target_state |= (1 << i);
+				}
+			}
+
+			// Zero out the amplitude at this state (we'll rebuild it)
+			newStateVector(state, 0) = C(0);
+		}
+	}
+
+	// Now apply the gate transformation
+	for (size_t state = 0; state < stateVector.rows; state++) {
+		// Check if control qubit is 1
+		if ((state >> control) & 1) {
+			// Extract target qubit values
+			int target_state = 0;
+			for (int i = 0; i < n; i++) {
+				if ((state >> g.target.i[i]) & 1) {
+					target_state |= (1 << i);
+				}
+			}
+
+			// Apply gate matrix: for each output state
+			for (int output_target = 0; output_target < (1 << n); output_target++) {
+				if (std::abs(g.matrix(output_target, target_state)) > 1e-10) {
+					// Construct the output basis state
+					size_t output_state = state;
+
+					// Clear target qubits in output_state
+					for (int i = 0; i < n; i++) {
+						output_state &= ~(1ULL << g.target.i[i]);
+					}
+
+					// Set target qubits according to output_target
+					for (int i = 0; i < n; i++) {
+						if ((output_target >> i) & 1) {
+							output_state |= (1ULL << g.target.i[i]);
+						}
+					}
+
+					// Add the transformed amplitude
+					newStateVector(output_state, 0) += g.matrix(output_target, target_state) * stateVector(state, 0);
+				}
+			}
+		}
+	}
+
+	stateVector = newStateVector;
 }
 
 void QuantumCircuit::apply_controlled_test(const Gate& g, const Index& ci) {

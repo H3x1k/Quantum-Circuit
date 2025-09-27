@@ -10,6 +10,7 @@
 // find the highest occurring number then use continued fractions to approximate the computed fraction from c/2^w
 // then use r to compute factors of N using gcd(a^r/2 +- 1, N)
 
+
 static Matrix<std::complex<double>> modular_mult_matrix(int a, int n, int q) {
 	using C = std::complex<double>;
 	int dim = 1 << q;
@@ -20,6 +21,7 @@ static Matrix<std::complex<double>> modular_mult_matrix(int a, int n, int q) {
 			result = (y * a) % n;
 		else
 			result = y;
+		//m(y, result) = C(1.0, 0.0);
 		m(result, y) = C(1.0, 0.0);
 	}
 	return m;
@@ -46,9 +48,11 @@ static void printCountingMarginals(const std::map<std::string, double>& fullDist
 	}
 }
 
+
 int main() {
-	const int n = 15;
-	const int a = 2;
+
+	const int n = 21;
+	const int a = 8;
 	const int t = 6; // number of counting qubits
 	const int q = 6; // number of work qubits
 	int nq = t + q;
