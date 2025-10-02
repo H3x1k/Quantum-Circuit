@@ -66,8 +66,8 @@ static void printCountingMarginals(const std::map<std::string, double>& fullDist
 
 int main() {
 
-	const int n = 15;
-	const int a = 2;
+	const int n = 21;
+	const int a = 5;
 	const int t = 6; // number of counting qubits
 	const int q = 6; // number of work qubits
 	int nq = t + q;

@@ -80,6 +80,9 @@ namespace qcf {
 		// Other
 		std::map<std::string, double> probabilityDistribution();
 
+		// Export
+		void toQASM(const std::string& filename) const;
+
 		// Display
 		void printState() const;
 		void printProb() const;

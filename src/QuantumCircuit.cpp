@@ -9,6 +9,7 @@
 #include <iomanip>
 #include <cassert>
 #include <map>
+#include <fstream>
 
 #define C std::complex<double>
 
@@ -747,6 +748,17 @@ std::map<std::string, double> QuantumCircuit::probabilityDistribution() {
 	return dist;
 }
 
+
+void QuantumCircuit::toQASM(const std::string& filename) const {
+	std::ofstream out(filename);
+
+	out << "OPENQASM 2.0;\n";
+	out << "include \"qelib1.inc\";\n\n";
+	out << "qreg q[" << numQubits << "];\n";
+	out << "creg c[" << numQubits << "];\n\n";
+
+	// loop through operations and write the corresponding operation either using switch or add qasm instruction for each operation type
+}
 
 
 void QuantumCircuit::printState() const {
