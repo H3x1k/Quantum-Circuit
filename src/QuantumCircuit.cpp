@@ -758,6 +758,37 @@ void QuantumCircuit::toQASM(const std::string& filename) const {
 	out << "creg c[" << numQubits << "];\n\n";
 
 	// loop through operations and write the corresponding operation either using switch or add qasm instruction for each operation type
+
+	for (int i = 0; i < operations.size(); ++i) {
+		switch (operations[i].type) {
+			case OperationType::H:
+				break;
+			case OperationType::X:
+				break;
+			case OperationType::Y:
+				break;
+			case OperationType::Z:
+				break;
+			case OperationType::CNOT:
+				break;
+			case OperationType::CZ:
+				break;
+			case OperationType::RX:
+				break;
+			case OperationType::RY:
+				break;
+			case OperationType::RZ:
+				break;
+			case OperationType::T:
+				break;
+			case OperationType::Tdag:
+				break;
+			case OperationType::S:
+				break;
+			case OperationType::Sdag:
+				break;
+		}
+	}
 }
 
 
