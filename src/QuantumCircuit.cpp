@@ -749,7 +749,7 @@ std::map<std::string, double> QuantumCircuit::probabilityDistribution() {
 }
 
 
-void QuantumCircuit::toQASM(const std::string& filename) const {
+void QuantumCircuit::toQASM(const std::string& filename) const { // untested
 	std::ofstream out(filename);
 
 	out << "OPENQASM 2.0;\n";
@@ -762,30 +762,43 @@ void QuantumCircuit::toQASM(const std::string& filename) const {
 	for (int i = 0; i < operations.size(); ++i) {
 		switch (operations[i].type) {
 			case OperationType::H:
+				out << "h " << operations[i].qubits[0] << ";";
 				break;
 			case OperationType::X:
+				out << "x " << operations[i].qubits[0] << ";";
 				break;
 			case OperationType::Y:
+				out << "y " << operations[i].qubits[0] << ";";
 				break;
 			case OperationType::Z:
+				out << "z " << operations[i].qubits[0] << ";";
 				break;
 			case OperationType::CNOT:
+				out << "cx " << operations[i].qubits[0] << ", " << operations[i].qubits[1] << ";";
 				break;
 			case OperationType::CZ:
+				out << "cz " << operations[i].qubits[0] << ", " << operations[i].qubits[1] << ";";
 				break;
 			case OperationType::RX:
+				out << "rx(" << operations[i].parameter << ") " << operations[i].qubits[0] << ";";
 				break;
 			case OperationType::RY:
+				out << "ry(" << operations[i].parameter << ") " << operations[i].qubits[0] << ";";
 				break;
 			case OperationType::RZ:
+				out << "rz(" << operations[i].parameter << ") " << operations[i].qubits[0] << ";";
 				break;
 			case OperationType::T:
+				out << "t " << operations[i].qubits[0] << ";";
 				break;
 			case OperationType::Tdag:
+				out << "tdg " << operations[i].qubits[0] << ";";
 				break;
 			case OperationType::S:
+				out << "s " << operations[i].qubits[0] << ";";
 				break;
 			case OperationType::Sdag:
+				out << "sdg " << operations[i].qubits[0] << ";";
 				break;
 		}
 	}
