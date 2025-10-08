@@ -762,43 +762,43 @@ void QuantumCircuit::toQASM(const std::string& filename) const { // untested
 	for (int i = 0; i < operations.size(); ++i) {
 		switch (operations[i].type) {
 			case OperationType::H:
-				out << "h " << operations[i].qubits[0] << ";";
+				out << "h " << operations[i].qubits[0] << ";\n";
 				break;
 			case OperationType::X:
-				out << "x " << operations[i].qubits[0] << ";";
+				out << "x " << operations[i].qubits[0] << ";\n";
 				break;
 			case OperationType::Y:
-				out << "y " << operations[i].qubits[0] << ";";
+				out << "y " << operations[i].qubits[0] << ";\n";
 				break;
 			case OperationType::Z:
-				out << "z " << operations[i].qubits[0] << ";";
+				out << "z " << operations[i].qubits[0] << ";\n";
 				break;
 			case OperationType::CNOT:
-				out << "cx " << operations[i].qubits[0] << ", " << operations[i].qubits[1] << ";";
+				out << "cx " << operations[i].qubits[0] << ", " << operations[i].qubits[1] << ";\n";
 				break;
 			case OperationType::CZ:
-				out << "cz " << operations[i].qubits[0] << ", " << operations[i].qubits[1] << ";";
+				out << "cz " << operations[i].qubits[0] << ", " << operations[i].qubits[1] << ";\n";
 				break;
 			case OperationType::RX:
-				out << "rx(" << operations[i].parameter << ") " << operations[i].qubits[0] << ";";
+				out << "rx(" << operations[i].parameter << ") " << operations[i].qubits[0] << ";\n";
 				break;
 			case OperationType::RY:
-				out << "ry(" << operations[i].parameter << ") " << operations[i].qubits[0] << ";";
+				out << "ry(" << operations[i].parameter << ") " << operations[i].qubits[0] << ";\n";
 				break;
 			case OperationType::RZ:
-				out << "rz(" << operations[i].parameter << ") " << operations[i].qubits[0] << ";";
+				out << "rz(" << operations[i].parameter << ") " << operations[i].qubits[0] << ";\n";
 				break;
 			case OperationType::T:
-				out << "t " << operations[i].qubits[0] << ";";
+				out << "t " << operations[i].qubits[0] << ";\n";
 				break;
 			case OperationType::Tdag:
-				out << "tdg " << operations[i].qubits[0] << ";";
+				out << "tdg " << operations[i].qubits[0] << ";\n";
 				break;
 			case OperationType::S:
-				out << "s " << operations[i].qubits[0] << ";";
+				out << "s " << operations[i].qubits[0] << ";\n";
 				break;
 			case OperationType::Sdag:
-				out << "sdg " << operations[i].qubits[0] << ";";
+				out << "sdg " << operations[i].qubits[0] << ";\n";
 				break;
 		}
 	}

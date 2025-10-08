@@ -18,7 +18,7 @@
 // optimize matrix operations
 // add more measurement or simulations
 // add noise models and realistic hardware simulation
-// different simulation modes (statevector, stabilizer (Clifford curciots), density matrix, tensor network (scale to more qubits))
+// different simulation modes (statevector, stabilizer (Clifford circuits), density matrix, tensor network (scale to more qubits))
 // integrate with standard formats (OpenQASM, Cirq, Qiskit)
 // multi-threading, gqu acceleration (CUDA)
 // high-level api
