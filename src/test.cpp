@@ -5,6 +5,7 @@
 // Articles
 // https://www.nature.com/articles/s41534-022-00583-7
 // https://www.nature.com/articles/s41567-022-01539-6?fromPaywallRec=false
+// https://en.wikipedia.org/wiki/Quantum_logic_gate
 
 // TODO:
 // add display for multi-qubit gates and multi control qubits
