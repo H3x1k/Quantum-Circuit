@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <h1>Test</h1>
+    <button onclick="run()">Run</button>
+    <pre id="out"></pre>
+
+    <script src="test.js"></script>
+    <script>
+        function run() {
+            try {
+                const out = document.getElementById('out');
+
+                var qc = new Module.QuantumCircuit(2);
+
+                var qubits = new Module.Index(0);
+                //qubits.push_back(0);
+
+                qc.H(qubits);
+                qc.X(qubits);
+                
+                qc.printState();
+
+                const probs = qc.probabilityDistribution();
+                console.log(probs);  // Plain JS object: { "00": 0.5, "01": 0.0, ... }
+
+                // Use it normally
+                for (let state in probs) {
+                    console.log(`${state}: ${probs[state]}`);
+                }
+
+                qubits.delete();
+                qc.delete();
+
+            } catch (e) {
+                document.getElementById('out').textContent = "Error: " + e;
+            }
+        }
+    </script>
+</body>
+</html>

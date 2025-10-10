@@ -6,34 +6,38 @@
 using namespace emscripten;
 using namespace qcf;
 
+val probabilityDistributionToJS(QuantumCircuit& qc) {
+    auto dist = qc.probabilityDistribution();
+    val obj = val::object();
+
+    for (const auto& pair : dist) {
+        obj.set(pair.first, pair.second);
+    }
+
+    return obj;
+}
+
 EMSCRIPTEN_BINDINGS(quantum_module) {
+
+    register_map<std::string, double>("MapStringDouble");
+    register_vector<size_t>("VectorSizeT");
+
     class_<QuantumCircuit>("QuantumCircuit")
         .constructor<int>()
-
-        // Single qubit gates - use proper select_overload syntax
         .function("H", &QuantumCircuit::H)
         .function("X", &QuantumCircuit::X)
         .function("Y", &QuantumCircuit::Y)
         .function("Z", &QuantumCircuit::Z)
-
-        // QFT
-        .function("IQFT", &QuantumCircuit::IQFT)
-
-        // Measurement
-        .function("measure_all", &QuantumCircuit::measure_all)
-        .function("probabilityDistribution", &QuantumCircuit::probabilityDistribution)
-
-        // Custom gate application
-        .function("apply_controlled_test", &QuantumCircuit::apply_controlled_test)
-
-        // Print functions
         .function("printState", &QuantumCircuit::printState)
-        .function("printProb", &QuantumCircuit::printProb);
+        .function("printProb", &QuantumCircuit::printProb)
+        .function("probabilityDistribution", &probabilityDistributionToJS);
 
-    emscripten::class_<Gate>("Gate")
-        .constructor<>();
+    class_<Gate>("Gate")
+        .constructor<const Matrix<std::complex<double>>&, Index>();
 
     class_<Index>("Index")
+        .constructor<size_t>()
+        .constructor<std::vector<size_t>>()
         .class_function("range", &Index::range);
 
     // Register std::vector<size_t> for gate operations

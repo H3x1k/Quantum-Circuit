@@ -800,6 +800,9 @@ void QuantumCircuit::toQASM(const std::string& filename) const { // untested
 			case OperationType::Sdag:
 				out << "sdg " << operations[i].qubits[0] << ";\n";
 				break;
+			case OperationType::Measure:
+				// nothing for now
+				break;
 		}
 	}
 }
