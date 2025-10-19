@@ -28,9 +28,27 @@ EMSCRIPTEN_BINDINGS(quantum_module) {
         .function("X", &QuantumCircuit::X)
         .function("Y", &QuantumCircuit::Y)
         .function("Z", &QuantumCircuit::Z)
+        .function("S", &QuantumCircuit::S)
+        .function("Sdag", &QuantumCircuit::Sdag)
+        .function("T", &QuantumCircuit::T)
+        .function("Tdag", &QuantumCircuit::Tdag)
+        .function("RX", &QuantumCircuit::RX)
+        .function("RY", &QuantumCircuit::RY)
+        .function("RZ", &QuantumCircuit::RZ)
+        .function("CNOT", &QuantumCircuit::CNOT)
+        .function("CZ", &QuantumCircuit::T)
+        .function("Rm", &QuantumCircuit::Rm)
+        .function("Rmdag", &QuantumCircuit::Rmdag)
+        .function("SWAP", &QuantumCircuit::SWAP)
+        .function("QFT", &QuantumCircuit::QFT)
+        .function("IQFT", &QuantumCircuit::IQFT)
+        //.function("apply", &QuantumCircuit::apply) // untested
+        //.function("apply_controlled", &QuantumCircuit::apply_controlled) // unfinished
+        //.function("measure", &QuantumCircuit::measure) // unfinished
         .function("printState", &QuantumCircuit::printState)
         .function("printProb", &QuantumCircuit::printProb)
-        .function("probabilityDistribution", &probabilityDistributionToJS);
+        .function("probabilityDistribution", &probabilityDistributionToJS)
+        .function("toQASM", &QuantumCircuit::toQASM);
 
     class_<Gate>("Gate")
         .constructor<const Matrix<std::complex<double>>&, Index>();

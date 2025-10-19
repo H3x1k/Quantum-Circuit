@@ -21,6 +21,8 @@
                 
                 qc.printState();
 
+                console.log(qc.toQASM());
+
                 const probs = qc.probabilityDistribution();
                 console.log(probs);  // Plain JS object: { "00": 0.5, "01": 0.0, ... }
 

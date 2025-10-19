@@ -749,8 +749,8 @@ std::map<std::string, double> QuantumCircuit::probabilityDistribution() {
 }
 
 
-void QuantumCircuit::toQASM(const std::string& filename) const { // untested
-	std::ofstream out(filename);
+std::string QuantumCircuit::toQASM() const { // untested
+	std::stringstream out;
 
 	out << "OPENQASM 2.0;\n";
 	out << "include \"qelib1.inc\";\n\n";
@@ -805,6 +805,7 @@ void QuantumCircuit::toQASM(const std::string& filename) const { // untested
 				break;
 		}
 	}
+	return out.str();
 }
 
 
