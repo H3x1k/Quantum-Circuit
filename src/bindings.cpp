@@ -55,7 +55,7 @@ EMSCRIPTEN_BINDINGS(quantum_module) {
 
     class_<Index>("Index")
         .constructor<size_t>()
-        .constructor<std::vector<size_t>>()
+        .constructor<std::vector<size_t>>() // cannot have two 1-parameter constructors
         .class_function("range", &Index::range);
 
     // Register std::vector<size_t> for gate operations
