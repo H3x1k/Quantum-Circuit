@@ -56,6 +56,34 @@ QuantumCircuit::QuantumCircuit(int numQubits)
 
 
 void QuantumCircuit::H(Index qi) {
+
+	/*   b0  b1  b2
+	000  0   0   0
+	001  0   1   1
+	010  1   0   2
+	011  1   1   3
+	100  2   2   0
+	101  2   3   1
+	110  3   2   2
+	111  3   3   3
+
+	step = 1 << bn;
+	for (int i = 0; i < size; i += 2 * step) {
+		for (int j = 0; j < step; j++) {
+			int idx0 = i + j;
+			int idx1 = idx0 + step;
+
+			// apply gate
+		}
+	}
+
+	this is O(2^n)
+	current method is O(2^2n)
+	this would be a great improvement
+	*/
+
+	
+
 	for (int i = 0; i < qi.i.size(); i++) {
 		int index = qi.i[i];
 		Matrix<C> H(2, 2);
