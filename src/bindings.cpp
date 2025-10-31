@@ -1,3 +1,6 @@
+#ifdef __EMSCRIPTEN__
+#include <emscripten/em_asm.h>
+
 #include <emscripten/bind.h>
 #include <emscripten/val.h>
 #include "QuantumCircuit.hpp"
@@ -61,3 +64,5 @@ EMSCRIPTEN_BINDINGS(quantum_module) {
     // Register std::vector<size_t> for gate operations
     register_vector<size_t>("VectorSizeT");
 }
+
+#endif

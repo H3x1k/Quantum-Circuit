@@ -13,13 +13,14 @@
 
 #define C std::complex<double>
 
-#define E        2.7182818f
+#define E         2.7182818f
 
-#define PI       3.1415926f
-#define PI_4     0.7853981f
+#define PI        3.1415926f
+#define PI_4      0.7853981f
 
-#define SQRT2    1.4142135f
-#define INVSQRT2 0.707106781187f
+#define SQRT2     1.4142135f
+#define INVSQRT2  0.707106781187f
+#define INVSQRT2d 0.707106781187
 
 
 static std::random_device rd;
@@ -67,23 +68,29 @@ void QuantumCircuit::H(Index qi) {
 	110  3   2   2
 	111  3   3   3
 
-	step = 1 << bn;
-	for (int i = 0; i < size; i += 2 * step) {
-		for (int j = 0; j < step; j++) {
-			int idx0 = i + j;
-			int idx1 = idx0 + step;
-
-			// apply gate
-		}
-	}
-
 	this is O(2^n)
 	current method is O(2^2n)
 	this would be a great improvement
 	*/
-
 	
+	for (int i = 0; i < qi.i.size(); ++i) {
+		int step = 1 << qi.i[i];
+		for (int i = 0; i < stateVector.rows; i += 2 * step) {
+			for (int j = 0; j < step; j++) {
+				int idx0 = i + j;
+				int idx1 = idx0 + step;
 
+				// hadamard gate 
+				auto a0 = stateVector(idx0, 0);
+				auto a1 = stateVector(idx1, 0);
+				stateVector(idx0, 0) = (a0 + a1) * INVSQRT2d;
+				stateVector(idx1, 0) = (a0 - a1) * INVSQRT2d;
+			}
+		}
+	}
+	
+	
+	/*
 	for (int i = 0; i < qi.i.size(); i++) {
 		int index = qi.i[i];
 		Matrix<C> H(2, 2);
@@ -99,6 +106,7 @@ void QuantumCircuit::H(Index qi) {
 
 		operations.push_back({ OperationType::H, {index} });
 	}
+	*/
 	//operations.push_back({ OperationType::H, qi });
 }
 
