@@ -46,7 +46,7 @@ namespace qcf {
 		QuantumCircuit(int numQubits);
 		
 		// Hadamard Gate
-		void H(Index qi);
+		void H(Index qi); void H2(Index qi);
 		// Pauli Gates
 		void X(Index qi);
 		void Y(Index qi);

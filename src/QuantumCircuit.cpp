@@ -70,7 +70,6 @@ void QuantumCircuit::H(Index qi) {
 
 	this is O(2^n)
 	current method is O(2^2n)
-	this would be a great improvement
 	*/
 	
 	for (int i = 0; i < qi.i.size(); ++i) {
@@ -81,16 +80,16 @@ void QuantumCircuit::H(Index qi) {
 				int idx1 = idx0 + step;
 
 				// hadamard gate 
-				auto a0 = stateVector(idx0, 0);
-				auto a1 = stateVector(idx1, 0);
+				C a0 = stateVector(idx0, 0);
+				C a1 = stateVector(idx1, 0);
 				stateVector(idx0, 0) = (a0 + a1) * INVSQRT2d;
 				stateVector(idx1, 0) = (a0 - a1) * INVSQRT2d;
 			}
 		}
 	}
-	
-	
-	/*
+	//operations.push_back({ OperationType::H, qi });
+}
+void QuantumCircuit::H2(Index qi) {
 	for (int i = 0; i < qi.i.size(); i++) {
 		int index = qi.i[i];
 		Matrix<C> H(2, 2);
@@ -106,7 +105,6 @@ void QuantumCircuit::H(Index qi) {
 
 		operations.push_back({ OperationType::H, {index} });
 	}
-	*/
 	//operations.push_back({ OperationType::H, qi });
 }
 

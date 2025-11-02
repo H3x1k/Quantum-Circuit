@@ -1,5 +1,7 @@
 #include "QuantumCircuit.hpp"
 
+#include <chrono>
+
 
 // Articles
 // https://www.nature.com/articles/s41534-022-00583-7
@@ -28,12 +30,23 @@
 
 int main() {
 
-	qcf::QuantumCircuit qc(2);
+	int nq = 6;
 
-	qc.H(0);
+	qcf::QuantumCircuit qc(nq);
 
-	qc.printProb();
-	qc.printState();
+	auto start1 = std::chrono::high_resolution_clock::now();
+	for (int i = 0; i < nq; ++i) qc.H2(i);
+	auto end1 = std::chrono::high_resolution_clock::now();
+
+	auto start2 = std::chrono::high_resolution_clock::now();
+	for (int i = 0; i < nq; ++i) qc.H(i);
+	auto end2 = std::chrono::high_resolution_clock::now();
+
+	auto duration1 = std::chrono::duration_cast<std::chrono::microseconds>(end1 - start1);
+	auto duration2 = std::chrono::duration_cast<std::chrono::microseconds>(end2 - start2);
+
+	std::cout << "Original method: " << duration1.count() << " microseconds" << std::endl;
+	std::cout << "New method:      " << duration2.count() << " microseconds" << std::endl;
 
 	while (1);
 	return 0;
