@@ -46,15 +46,17 @@ namespace qcf {
 
 		QuantumCircuit(int numQubits);
 		
+		void apply_single(Index qi, Matrix<std::complex<double>> m);
+
 		// Hadamard Gate
-		void H(Index qi); void H2(Index qi);
+		void H(Index qi);
 		// Pauli Gates
 		void X(Index qi);
 		void Y(Index qi);
 		void Z(Index qi);
 		// Phase Gates
-		void S(Index qi); void Sdag(Index qi);
-		void T(Index qi); void Tdag(Index qi);
+		void S(Index qi); void Sdg(Index qi);
+		void T(Index qi); void Tdg(Index qi);
 		// Rotation Gates
 		void RX(Index qi, Angle angle);
 		void RY(Index qi, Angle angle);
@@ -62,7 +64,7 @@ namespace qcf {
 		// Controlled Gates
 		void CNOT(int ci, int ti); // needs to be re-done with Index
 		void CZ(Index ci);
-		void Rm(int ci, int ti, int m); void Rmdag(int ci, int ti, int m); // needs to be re-done with Index
+		void Rm(int ci, int ti, int m); void Rmdg(int ci, int ti, int m); // needs to be re-done with Index
 		void SWAP(int q1, int q2); // only takes two qubits and no operation added  // needs to be re-done with Index
 		// Composite Gates
 		void QFT(Index qi); void IQFT(Index qi);

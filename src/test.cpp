@@ -29,10 +29,9 @@
 
 
 int main() {
-	qcf::QuantumCircuit qc(2);
+	qcf::QuantumCircuit qc(1);
+	qc.X2(0);
 	qc.H(0);
-	qc.CNOT(0, 1);
-	qc.printDiagram();
 	qc.printState();
 
 	/*

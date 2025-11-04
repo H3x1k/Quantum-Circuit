@@ -27,6 +27,29 @@ static std::random_device rd;
 static std::mt19937 gen(rd());
 static std::uniform_real_distribution<double> dist(0.0, 1.0);
 
+enum class GateType {
+	H, X, Y, Z, S, Sdg, T, Tdg
+};
+
+static const std::map<GateType, Matrix<C>>& gateLibrary() {
+	static const C I(0, 1);
+	static const std::map<GateType, Matrix<C>> gates = {
+		{GateType::H, Matrix<C>(2, 2, {INVSQRT2d, INVSQRT2d,INVSQRT2d, -INVSQRT2d})},
+		{GateType::X, Matrix<C>(2, 2, {0, 1, 1, 0})},
+		{GateType::Y, Matrix<C>(2, 2, {0, -I, I, 0})},
+		{GateType::Z, Matrix<C>(2, 2, {1, 0, 0, -1})},
+		{GateType::S, Matrix<C>(2, 2, {1, 0, 0, I})},
+		{GateType::Sdg, Matrix<C>(2, 2, {1, 0, 0, -I})},
+		{GateType::T, Matrix<C>(2, 2, {1, 0, 0, C(INVSQRT2d, INVSQRT2d)})},
+		{GateType::Tdg, Matrix<C>(2, 2, {1, 0, 0, C(INVSQRT2d, -INVSQRT2d)})}
+	};
+	return gates;
+}
+
+static Matrix<C> getGateMatrix(GateType type) {
+	return gateLibrary().at(type);
+}
+
 
 using namespace qcf;
 
@@ -54,260 +77,85 @@ QuantumCircuit::QuantumCircuit(int numQubits)
 	operations = {};
 }
 
-
-
-void QuantumCircuit::H(Index qi) {
-
-	/*   b0  b1  b2
-	000  0   0   0
-	001  0   1   1
-	010  1   0   2
-	011  1   1   3
-	100  2   2   0
-	101  2   3   1
-	110  3   2   2
-	111  3   3   3
-
-	this is O(2^n)
-	current method is O(2^2n)
-	*/
-	
+void QuantumCircuit::apply_single(Index qi, Matrix<C> m) {
 	for (int i = 0; i < qi.i.size(); ++i) {
-		int step = 1 << qi.i[i];
+		int step = 1 << qi[i];
 		for (int i = 0; i < stateVector.rows; i += 2 * step) {
 			for (int j = 0; j < step; j++) {
 				int idx0 = i + j;
 				int idx1 = idx0 + step;
-
-				// hadamard gate 
 				C a0 = stateVector(idx0, 0);
 				C a1 = stateVector(idx1, 0);
-				stateVector(idx0, 0) = (a0 + a1) * INVSQRT2d;
-				stateVector(idx1, 0) = (a0 - a1) * INVSQRT2d;
+				stateVector(idx0, 0) = a0 * m(0, 0) + a1 * m(0, 1);
+				stateVector(idx1, 0) = a0 * m(1, 0) + a1 * m(1, 1);
 			}
 		}
 	}
-	operations.push_back({ OperationType::H, qi });
 }
-void QuantumCircuit::H2(Index qi) {
-	for (int i = 0; i < qi.i.size(); i++) {
-		int index = qi.i[i];
-		Matrix<C> H(2, 2);
-		H(0, 0) = INVSQRT2; H(0, 1) = INVSQRT2;
-		H(1, 0) = INVSQRT2; H(1, 1) = -INVSQRT2;
 
-		Matrix I1 = Matrix<C>::identity(size_t(1) << (numQubits - index - 1));
-		Matrix I2 = Matrix<C>::identity(size_t(1) << index);
-
-		Matrix fullGate = I1.tensorProduct(H).tensorProduct(I2);
-
-		stateVector = fullGate * stateVector;
-
-		//operations.push_back({ OperationType::H, index });
-	}
+void QuantumCircuit::H(Index qi) {
+	apply_single(qi, getGateMatrix(GateType::H));
 	operations.push_back({ OperationType::H, qi });
 }
 
 void QuantumCircuit::X(Index qi) {
-	for (int i = 0; i < qi.i.size(); i++) {
-		int index = qi.i[i];
-		Matrix<C> X(2, 2, C(0.0, 0.0));
-		X(0, 1) = C(1.0, 0.0);
-		X(1, 0) = C(1.0, 0.0);
-
-		Matrix I1 = Matrix<C>::identity(size_t(1) << (numQubits - index - 1));
-		Matrix I2 = Matrix<C>::identity(size_t(1) << index);
-
-		Matrix fullGate = I1.tensorProduct(X).tensorProduct(I2);
-
-		stateVector = fullGate * stateVector;
-
-		//operations.push_back({ OperationType::X, index });
-	}
-	operations.push_back({ OperationType::X, {qi} });
+	apply_single(qi, getGateMatrix(GateType::X));
+	operations.push_back({ OperationType::X, qi });
 }
 
 void QuantumCircuit::Y(Index qi) {
-	for (int i = 0; i < qi.i.size(); i++) {
-		int index = qi.i[i];
-		Matrix<C> Y(2, 2, C(0.0, 0.0));
-		Y(0, 1) = C(0.0, 1.0);
-		Y(1, 0) = C(0.0, 1.0);
-
-		Matrix I1 = Matrix<C>::identity(size_t(1) << (numQubits - index - 1));
-		Matrix I2 = Matrix<C>::identity(size_t(1) << index);
-
-		Matrix fullGate = I1.tensorProduct(Y).tensorProduct(I2);
-
-		stateVector = fullGate * stateVector;
-
-		//operations.push_back({ OperationType::Y, index });
-	}
+	apply_single(qi, getGateMatrix(GateType::Y));
 	operations.push_back({ OperationType::Y, qi });
 }
 
 void QuantumCircuit::Z(Index qi) {
-	for (int i = 0; i < qi.i.size(); i++) {
-		int index = qi.i[i];
-		Matrix<C> Z(2, 2, C(0.0, 0.0));
-		Z(0, 0) = C(1.0, 0.0);
-		Z(1, 1) = C(-1.0, 0.0);
-
-		Matrix I1 = Matrix<C>::identity(size_t(1) << (numQubits - index - 1));
-		Matrix I2 = Matrix<C>::identity(size_t(1) << index);
-
-		Matrix fullGate = I1.tensorProduct(Z).tensorProduct(I2);
-
-		stateVector = fullGate * stateVector;
-
-		//operations.push_back({ OperationType::Z, index });
-	}
+	apply_single(qi, getGateMatrix(GateType::Z));
 	operations.push_back({ OperationType::Z, qi });
 }
 
-
 void QuantumCircuit::S(Index qi) {
-	for (int i = 0; i < qi.i.size(); i++) {
-		int index = qi.i[i];
-		Matrix<C> S(2, 2, C(0.0, 0.0));
-		S(0, 0) = C(1.0, 0.0);
-		S(1, 1) = C(0.0, 1.0);
-
-		Matrix I1 = Matrix<C>::identity(size_t(1) << (numQubits - index - 1));
-		Matrix I2 = Matrix<C>::identity(size_t(1) << index);
-
-		Matrix fullGate = I1.tensorProduct(S).tensorProduct(I2);
-
-		stateVector = fullGate * stateVector;
-
-		//operations.push_back({ OperationType::S, index });
-	}
+	apply_single(qi, getGateMatrix(GateType::S));
 	operations.push_back({ OperationType::S, qi });
 }
 
-void QuantumCircuit::Sdag(Index qi) {
-	for (int i = 0; i < qi.i.size(); i++) {
-		int index = qi.i[i];
-		Matrix<C> Sdag(2, 2, C(0.0, 0.0));
-		Sdag(0, 0) = C(1.0, 0.0);
-		Sdag(1, 1) = C(0.0, -1.0);
-
-		Matrix I1 = Matrix<C>::identity(size_t(1) << (numQubits - index - 1));
-		Matrix I2 = Matrix<C>::identity(size_t(1) << index);
-
-		Matrix fullGate = I1.tensorProduct(Sdag).tensorProduct(I2);
-
-		stateVector = fullGate * stateVector;
-
-		//operations.push_back({ OperationType::Sdag, index });
-	}
+void QuantumCircuit::Sdg(Index qi) {
+	apply_single(qi, getGateMatrix(GateType::Sdg));
 	operations.push_back({ OperationType::Sdag, qi });
 }
 
 void QuantumCircuit::T(Index qi) {
-	for (int i = 0; i < qi.i.size(); i++) {
-		int index = qi.i[i];
-		Matrix<C> T(2, 2, C(0.0, 0.0));
-		T(0, 0) = C(1.0, 0.0);
-		T(1, 1) = C(INVSQRT2, INVSQRT2);
-
-		Matrix I1 = Matrix<C>::identity(size_t(1) << (numQubits - index - 1));
-		Matrix I2 = Matrix<C>::identity(size_t(1) << index);
-
-		Matrix fullGate = I1.tensorProduct(T).tensorProduct(I2);
-
-		stateVector = fullGate * stateVector;
-
-		//operations.push_back({ OperationType::T, index });
-	}
+	apply_single(qi, getGateMatrix(GateType::T));
 	operations.push_back({ OperationType::T, qi });
 }
 
-void QuantumCircuit::Tdag(Index qi) {
-	for (int i = 0; i < qi.i.size(); i++) {
-		int index = qi.i[i];
-		Matrix<C> Tdag(2, 2, C(0.0, 0.0));
-		Tdag(0, 0) = C(1.0, 0.0);
-		Tdag(1, 1) = C(INVSQRT2, -INVSQRT2);
-
-		Matrix I1 = Matrix<C>::identity(size_t(1) << (numQubits - index - 1));
-		Matrix I2 = Matrix<C>::identity(size_t(1) << index);
-
-		Matrix fullGate = I1.tensorProduct(Tdag).tensorProduct(I2);
-
-		stateVector = fullGate * stateVector;
-
-		//operations.push_back({ OperationType::Tdag, index });
-	}
+void QuantumCircuit::Tdg(Index qi) {
+	apply_single(qi, getGateMatrix(GateType::Tdg));
 	operations.push_back({ OperationType::Tdag, qi });
 }
 
 
 void QuantumCircuit::RX(Index qi, Angle angle) {
-	for (int i = 0; i < qi.i.size(); i++) {
-		int index = qi.i[i];
-		Matrix<C> RX(2, 2, C(0.0, 0.0));
-		double theta = angle.get() / 2;
-		double costheta = cos(theta);
-		double sintheta = sin(theta);
-		RX(0, 0) = C(costheta, 0.0);
-		RX(0, 1) = C(0.0, -sintheta);
-		RX(1, 0) = C(0.0, -sintheta);
-		RX(1, 1) = C(costheta, 0.0);
-
-		Matrix I1 = Matrix<C>::identity(size_t(1) << (numQubits - index - 1));
-		Matrix I2 = Matrix<C>::identity(size_t(1) << index);
-
-		Matrix fullGate = I1.tensorProduct(RX).tensorProduct(I2);
-
-		stateVector = fullGate * stateVector;
-
-		//operations.push_back({ OperationType::RX, index, angle.get() });
-	}
+	double theta = angle.get() / 2;
+	double costheta = cos(theta);
+	double sintheta = sin(theta);
+	Matrix<C> RX(2, 2, { C(costheta, 0.0), C(0.0, -sintheta), C(0.0, -sintheta), C(costheta, 0.0) });
+	apply_single(qi, RX);
 	operations.push_back({ OperationType::RX, qi, {}, angle.get() });
 }
 
 void QuantumCircuit::RY(Index qi, Angle angle) {
-	for (int i = 0; i < qi.i.size(); i++) {
-		int index = qi.i[i];
-		Matrix<C> RY(2, 2, C(0.0, 0.0));
-		double theta = angle.get() / 2;
-		double costheta = cos(theta);
-		double sintheta = sin(theta);
-		RY(0, 0) = C(costheta, 0.0);
-		RY(0, 1) = C(-sintheta, 0.0);
-		RY(1, 0) = C(-sintheta, 0.0);
-		RY(1, 1) = C(costheta, 0.0);
-
-		Matrix I1 = Matrix<C>::identity(size_t(1) << (numQubits - index - 1));
-		Matrix I2 = Matrix<C>::identity(size_t(1) << index);
-
-		Matrix fullGate = I1.tensorProduct(RY).tensorProduct(I2);
-
-		stateVector = fullGate * stateVector;
-
-		//operations.push_back({ OperationType::RY, index, angle.get() });
-	}
+	double theta = angle.get() / 2;
+	double costheta = cos(theta);
+	double sintheta = sin(theta);
+	Matrix<C> RY(2, 2, { C(costheta, 0.0), C(-sintheta, 0.0), C(-sintheta, 0.0), C(costheta, 0.0) });
+	apply_single(qi, RY);
 	operations.push_back({ OperationType::RY, qi, {}, angle.get() });
 }
 
 void QuantumCircuit::RZ(Index qi, Angle angle) {
-	for (int i = 0; i < qi.i.size(); i++) {
-		int index = qi.i[i];
-		Matrix<C> RZ(2, 2, C(0.0, 0.0));
-		C expVal = std::exp(C(0.0, angle.get() * 0.5));
-		RZ(0, 0) = 1.0 / expVal;
-		RZ(1, 1) = expVal;
-
-		Matrix I1 = Matrix<C>::identity(size_t(1) << (numQubits - index - 1));
-		Matrix I2 = Matrix<C>::identity(size_t(1) << index);
-
-		Matrix fullGate = I1.tensorProduct(RZ).tensorProduct(I2);
-
-		stateVector = fullGate * stateVector;
-
-		//operations.push_back({ OperationType::RZ, index, angle.get() });
-	}
+	C expVal = std::exp(C(0.0, angle.get() * 0.5));
+	Matrix<C> RZ(2, 2, { 1.0 / expVal, 0, 0, expVal });
+	apply_single(qi, RZ);
 	operations.push_back({ OperationType::RZ, qi, {}, angle.get() });
 }
 
@@ -351,7 +199,7 @@ void QuantumCircuit::Rm(int ci, int ti, int m) {
 			stateVector(i, 0) *= phase;
 }
 
-void QuantumCircuit::Rmdag(int ci, int ti, int m) {
+void QuantumCircuit::Rmdg(int ci, int ti, int m) {
 	double theta = -2.0 * PI / (1ull << m);
 	C phase = std::exp(C(0, theta));
 	for (size_t i = 0; i < stateVector.rows; i++)
@@ -397,7 +245,7 @@ void QuantumCircuit::IQFT(Index qi) {
 		int index = qi.i[i];
 		for (size_t j = n - 1; j > i; j--) {
 			int jindex = qi.i[j];
-			Rmdag(jindex, index, j - i);
+			Rmdg(jindex, index, j - i);
 		}
 		H(index);
 	}
