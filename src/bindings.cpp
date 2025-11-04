@@ -79,3 +79,6 @@ EMSCRIPTEN_BINDINGS(quantum_module) {
 * em++ "all source files" -I include -std=c++17 -O3 -s ALLOW_MEMORY_GROWTH=1 -s EMBIND_STD_STRING_IS_UTF8=1 --bind -o "name".js
 * em++ src/bindings.cpp src/QuantumCircuit.cpp src/Index.cpp src/Gate.cpp src/Angle.cpp src/Matrix.cpp -I include -std=c++17 -O3 -s ALLOW_MEMORY_GROWTH=1 -s EMBIND_STD_STRING_IS_UTF8=1 --bind -o test.js
 */
+
+// working emscripten command
+// emcc src/bindings.cpp src/QuantumCircuit.cpp src/Index.cpp src/Gate.cpp src/Angle.cpp src/Matrix.cpp -I include -std=c++17 -O3 -s ALLOW_MEMORY_GROWTH=1 -s EMBIND_STD_STRING_IS_UTF8=1 --bind -s MODULARIZE=1 -s EXPORT_NAME=QuantumCircuit -o test.js
