@@ -29,7 +29,13 @@
 
 
 int main() {
+	qcf::QuantumCircuit qc(2);
+	qc.H(0);
+	qc.CNOT(0, 1);
+	qc.printDiagram();
+	qc.printState();
 
+	/*
 	int nq = 6;
 
 	qcf::QuantumCircuit qc(nq);
@@ -47,6 +53,7 @@ int main() {
 
 	std::cout << "Original method: " << duration1.count() << " microseconds" << std::endl;
 	std::cout << "New method:      " << duration2.count() << " microseconds" << std::endl;
+	*/
 
 	while (1);
 	return 0;

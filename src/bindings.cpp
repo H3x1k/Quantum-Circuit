@@ -58,11 +58,24 @@ EMSCRIPTEN_BINDINGS(quantum_module) {
 
     class_<Index>("Index")
         .constructor<size_t>()
-        .constructor<std::vector<size_t>>() // cannot have two 1-parameter constructors
+        //.constructor<std::vector<size_t>>() // cannot have two 1-parameter constructors
         .class_function("range", &Index::range);
 
     // Register std::vector<size_t> for gate operations
-    register_vector<size_t>("VectorSizeT");
+    //register_vector<size_t>("VectorSizeT");
 }
 
 #endif
+
+/* To compile to wasm
+* 
+* to activate (in cwd "emsdk")
+* git pull
+* ./emsdk install latest
+* ./emsdk activate latest
+* emsdk_env.bat
+* 
+* to compile
+* em++ "all source files" -I include -std=c++17 -O3 -s ALLOW_MEMORY_GROWTH=1 -s EMBIND_STD_STRING_IS_UTF8=1 --bind -o "name".js
+* em++ src/bindings.cpp src/QuantumCircuit.cpp src/Index.cpp src/Gate.cpp src/Angle.cpp src/Matrix.cpp -I include -std=c++17 -O3 -s ALLOW_MEMORY_GROWTH=1 -s EMBIND_STD_STRING_IS_UTF8=1 --bind -o test.js
+*/

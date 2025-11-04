@@ -87,7 +87,7 @@ void QuantumCircuit::H(Index qi) {
 			}
 		}
 	}
-	//operations.push_back({ OperationType::H, qi });
+	operations.push_back({ OperationType::H, qi });
 }
 void QuantumCircuit::H2(Index qi) {
 	for (int i = 0; i < qi.i.size(); i++) {
@@ -103,9 +103,9 @@ void QuantumCircuit::H2(Index qi) {
 
 		stateVector = fullGate * stateVector;
 
-		operations.push_back({ OperationType::H, {index} });
+		//operations.push_back({ OperationType::H, index });
 	}
-	//operations.push_back({ OperationType::H, qi });
+	operations.push_back({ OperationType::H, qi });
 }
 
 void QuantumCircuit::X(Index qi) {
@@ -122,9 +122,9 @@ void QuantumCircuit::X(Index qi) {
 
 		stateVector = fullGate * stateVector;
 
-		operations.push_back({ OperationType::X, {index} });
+		//operations.push_back({ OperationType::X, index });
 	}
-	//operations.push_back({ OperationType::X, {qi} });
+	operations.push_back({ OperationType::X, {qi} });
 }
 
 void QuantumCircuit::Y(Index qi) {
@@ -141,8 +141,9 @@ void QuantumCircuit::Y(Index qi) {
 
 		stateVector = fullGate * stateVector;
 
-		operations.push_back({ OperationType::Y, {index} });
+		//operations.push_back({ OperationType::Y, index });
 	}
+	operations.push_back({ OperationType::Y, qi });
 }
 
 void QuantumCircuit::Z(Index qi) {
@@ -159,8 +160,9 @@ void QuantumCircuit::Z(Index qi) {
 
 		stateVector = fullGate * stateVector;
 
-		operations.push_back({ OperationType::Z, {index} });
+		//operations.push_back({ OperationType::Z, index });
 	}
+	operations.push_back({ OperationType::Z, qi });
 }
 
 
@@ -178,8 +180,9 @@ void QuantumCircuit::S(Index qi) {
 
 		stateVector = fullGate * stateVector;
 
-		operations.push_back({ OperationType::S, {index} }); \
+		//operations.push_back({ OperationType::S, index });
 	}
+	operations.push_back({ OperationType::S, qi });
 }
 
 void QuantumCircuit::Sdag(Index qi) {
@@ -196,8 +199,9 @@ void QuantumCircuit::Sdag(Index qi) {
 
 		stateVector = fullGate * stateVector;
 
-		operations.push_back({ OperationType::Sdag, {index} });
+		//operations.push_back({ OperationType::Sdag, index });
 	}
+	operations.push_back({ OperationType::Sdag, qi });
 }
 
 void QuantumCircuit::T(Index qi) {
@@ -214,8 +218,9 @@ void QuantumCircuit::T(Index qi) {
 
 		stateVector = fullGate * stateVector;
 
-		operations.push_back({ OperationType::T, {index} });
+		//operations.push_back({ OperationType::T, index });
 	}
+	operations.push_back({ OperationType::T, qi });
 }
 
 void QuantumCircuit::Tdag(Index qi) {
@@ -232,8 +237,9 @@ void QuantumCircuit::Tdag(Index qi) {
 
 		stateVector = fullGate * stateVector;
 
-		operations.push_back({ OperationType::Tdag, {index} });
+		//operations.push_back({ OperationType::Tdag, index });
 	}
+	operations.push_back({ OperationType::Tdag, qi });
 }
 
 
@@ -256,8 +262,9 @@ void QuantumCircuit::RX(Index qi, Angle angle) {
 
 		stateVector = fullGate * stateVector;
 
-		operations.push_back({ OperationType::RX, {index}, angle.get() });
+		//operations.push_back({ OperationType::RX, index, angle.get() });
 	}
+	operations.push_back({ OperationType::RX, qi, {}, angle.get() });
 }
 
 void QuantumCircuit::RY(Index qi, Angle angle) {
@@ -279,8 +286,9 @@ void QuantumCircuit::RY(Index qi, Angle angle) {
 
 		stateVector = fullGate * stateVector;
 
-		operations.push_back({ OperationType::RY, {index}, angle.get() });
+		//operations.push_back({ OperationType::RY, index, angle.get() });
 	}
+	operations.push_back({ OperationType::RY, qi, {}, angle.get() });
 }
 
 void QuantumCircuit::RZ(Index qi, Angle angle) {
@@ -298,8 +306,9 @@ void QuantumCircuit::RZ(Index qi, Angle angle) {
 
 		stateVector = fullGate * stateVector;
 
-		operations.push_back({ OperationType::RZ, {index}, angle.get() });
+		//operations.push_back({ OperationType::RZ, index, angle.get() });
 	}
+	operations.push_back({ OperationType::RZ, qi, {}, angle.get() });
 }
 
 
@@ -313,7 +322,7 @@ void QuantumCircuit::CNOT(int ci, int ti) {
 		}
 	}
 
-	operations.push_back({ OperationType::CNOT, {ci, ti} });
+	operations.push_back({ OperationType::CNOT, Index(ci), Index(ti) });
 }
 
 void QuantumCircuit::CZ(Index ci) {
@@ -331,7 +340,7 @@ void QuantumCircuit::CZ(Index ci) {
 	}
 
 	std::vector<int> i(ci.i.begin(), ci.i.end()); // temp
-	operations.push_back({ OperationType::CZ, i });
+	operations.push_back({ OperationType::CZ, ci });
 }
 
 void QuantumCircuit::Rm(int ci, int ti, int m) {
@@ -672,8 +681,8 @@ Measurement QuantumCircuit::measure(int qi, bool collapse, bool saveOp) {
 		}
 	}
 
-	if (saveOp)
-		operations.push_back({ OperationType::Measure, {qi} });
+	//if (saveOp)
+	//	operations.push_back({ OperationType::Measure, qi });
 
 	return m;
 }
@@ -796,43 +805,43 @@ std::string QuantumCircuit::toQASM() const { // untested
 	for (int i = 0; i < operations.size(); ++i) {
 		switch (operations[i].type) {
 			case OperationType::H:
-				out << "h " << operations[i].qubits[0] << ";\n";
+				out << "h " << operations[i].q[0] << ";\n";
 				break;
 			case OperationType::X:
-				out << "x " << operations[i].qubits[0] << ";\n";
+				out << "x " << operations[i].q[0] << ";\n";
 				break;
 			case OperationType::Y:
-				out << "y " << operations[i].qubits[0] << ";\n";
+				out << "y " << operations[i].q[0] << ";\n";
 				break;
 			case OperationType::Z:
-				out << "z " << operations[i].qubits[0] << ";\n";
+				out << "z " << operations[i].q[0] << ";\n";
 				break;
 			case OperationType::CNOT:
-				out << "cx " << operations[i].qubits[0] << ", " << operations[i].qubits[1] << ";\n";
+				out << "cx " << operations[i].q[0] << ", " << operations[i].q[1] << ";\n";
 				break;
 			case OperationType::CZ:
-				out << "cz " << operations[i].qubits[0] << ", " << operations[i].qubits[1] << ";\n";
+				out << "cz " << operations[i].q[0] << ", " << operations[i].q[1] << ";\n";
 				break;
 			case OperationType::RX:
-				out << "rx(" << operations[i].parameter << ") " << operations[i].qubits[0] << ";\n";
+				out << "rx(" << operations[i].parameter << ") " << operations[i].q[0] << ";\n";
 				break;
 			case OperationType::RY:
-				out << "ry(" << operations[i].parameter << ") " << operations[i].qubits[0] << ";\n";
+				out << "ry(" << operations[i].parameter << ") " << operations[i].q[0] << ";\n";
 				break;
 			case OperationType::RZ:
-				out << "rz(" << operations[i].parameter << ") " << operations[i].qubits[0] << ";\n";
+				out << "rz(" << operations[i].parameter << ") " << operations[i].q[0] << ";\n";
 				break;
 			case OperationType::T:
-				out << "t " << operations[i].qubits[0] << ";\n";
+				out << "t " << operations[i].q[0] << ";\n";
 				break;
 			case OperationType::Tdag:
-				out << "tdg " << operations[i].qubits[0] << ";\n";
+				out << "tdg " << operations[i].q[0] << ";\n";
 				break;
 			case OperationType::S:
-				out << "s " << operations[i].qubits[0] << ";\n";
+				out << "s " << operations[i].q[0] << ";\n";
 				break;
 			case OperationType::Sdag:
-				out << "sdg " << operations[i].qubits[0] << ";\n";
+				out << "sdg " << operations[i].q[0] << ";\n";
 				break;
 			case OperationType::Measure:
 				// nothing for now
@@ -955,45 +964,45 @@ void QuantumCircuit::printDiagram() const {
 	for (int i = 0; i < numOps; i++) {
 		switch (operations[i].type) {
 		case OperationType::H: {
-			drawBoxGate(canvas, operations[i].qubits[0], "H", numQubits);
+			drawBoxGate(canvas, operations[i].q[0], "H", numQubits);
 			break;
 		}
 		case OperationType::X: {
-			drawBoxGate(canvas, operations[i].qubits[0], "X", numQubits);
+			drawBoxGate(canvas, operations[i].q[0], "X", numQubits);
 			break;
 		}
 		case OperationType::Y: {
-			drawBoxGate(canvas, operations[i].qubits[0], "Y", numQubits);
+			drawBoxGate(canvas, operations[i].q[0], "Y", numQubits);
 			break;
 		}
 		case OperationType::Z: {
-			drawBoxGate(canvas, operations[i].qubits[0], "Z", numQubits);
+			drawBoxGate(canvas, operations[i].q[0], "Z", numQubits);
 			break;
 		}
 		case OperationType::RX: {
 			std::string rparam = "RX(" + doubleToString(operations[i].parameter, 3) + ")";
-			drawBoxGate(canvas, operations[i].qubits[0], rparam, numQubits);
+			drawBoxGate(canvas, operations[i].q[0], rparam, numQubits);
 			break;
 		}
 		case OperationType::RY: {
 			std::string rparam = "RY(" + doubleToString(operations[i].parameter, 3) + ")";
-			drawBoxGate(canvas, operations[i].qubits[0], rparam, numQubits);
+			drawBoxGate(canvas, operations[i].q[0], rparam, numQubits);
 			break;
 		}
 		case OperationType::RZ: {
 			std::string rparam = "RZ(" + doubleToString(operations[i].parameter, 3) + ")";
-			drawBoxGate(canvas, operations[i].qubits[0], rparam, numQubits);
+			drawBoxGate(canvas, operations[i].q[0], rparam, numQubits);
 			break;
 		}
 		case OperationType::CNOT: {
-			int ci = operations[i].qubits[0];
-			int ti = operations[i].qubits[1];
+			int ci = operations[i].q[0];
+			int ti = operations[i].tq[0];
 			drawControlledGate(canvas, ci, ti, "X", numQubits);
 			break;
 		}
 		case OperationType::CZ: {
-			int ci = operations[i].qubits[0];
-			int ti = operations[i].qubits[1];
+			int ci = operations[i].q[0];
+			int ti = operations[i].q[1];
 			drawControlledGate(canvas, ci, ti, "Z", numQubits);
 			break;
 		}

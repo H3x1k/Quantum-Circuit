@@ -32,7 +32,8 @@ namespace qcf {
 
 	struct Operation {
 		OperationType type;
-		std::vector<int> qubits{};
+		Index q;
+		Index tq = {};
 		double parameter = 0.0;
 	};
 
